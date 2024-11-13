@@ -1,6 +1,6 @@
 # cmpm-121-final
 # Devlog Entry - [11/12/24]
-Team Members: Thomas Wessel
+Team Members: Thomas Wessel, Jacqueline Gracey
 
 
 ## Introducing the team
