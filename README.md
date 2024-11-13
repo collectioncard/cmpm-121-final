@@ -6,7 +6,7 @@ Team Members: Thomas Wessel, Jacqueline Gracey, Jarod Spangler
 ## Introducing the team
 * Tools Lead - Thomas Wessel: Will help everyone get their tools set up, manage source control, and establish code style conventions.
 * Engine Lead - Jacqueline Gracey: Look into alternative engines in case of swapping and be the got to for knowledge about this alternate engine. Manage folder organization among everyone.
-* Engine Assistant - Michael Campanile: Assist the lead in researching engines and learning more about these alternatives as well as organize assets and files.
+* Engine Assistant - Michael Campanile: Assist the lead in researching engines and learning more about these alternatives as well as organize assets and files in accordance with the lead.
 * Producer - Jarod Spangler: Will help manage the direction of the game, help manage time and work delegation, as well as a little bit of everything. Help contribute to the style of the game, and help design or decide on art assets, as well as guide the vision for gameplay, and help write code.
 * Design Lead- Jack Wilhelm: Will help write code alongside working with artistic and systematic ideas and goals, as well as help guide gameplay.
 
