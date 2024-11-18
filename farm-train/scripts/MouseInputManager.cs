@@ -54,7 +54,11 @@ public partial class MouseInputManager : Node2D
 		{
 			_playerPositionTween?.Kill();
 			_playerPositionTween = Player.CreateTween();
-			_playerPositionTween.TweenProperty(Player, "position", GetGlobalMousePosition(), GetGlobalMousePosition().DistanceTo(Player.Position)/Global.PlayerSpeed);
+			Vector2 tiledPosition = GetGlobalMousePosition();
+			float tilePlayerOffset = (Global.TileWidth/2);
+			tiledPosition.X = ((float)Math.Floor((tiledPosition.X / Global.TileWidth)) * Global.TileWidth) + tilePlayerOffset;
+			tiledPosition.Y = ((float)Math.Floor((tiledPosition.Y / Global.TileWidth)) * Global.TileWidth) + tilePlayerOffset;
+			_playerPositionTween.TweenProperty(Player, "position", tiledPosition , tiledPosition.DistanceTo(Player.Position)/Global.PlayerSpeed);
 		}
 	}
 }
