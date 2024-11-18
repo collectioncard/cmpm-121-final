@@ -14,6 +14,10 @@ config/name="Farm Train"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[dotnet]
+
+project/assembly_name="Farm Train"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
