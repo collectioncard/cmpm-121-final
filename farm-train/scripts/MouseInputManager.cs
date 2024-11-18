@@ -33,6 +33,15 @@ public partial class MouseInputManager : Node2D
         _make_Player();
     }
 
+    public override void _Process(double delta)
+    {
+        if (Input.IsActionPressed("action1"))
+        {
+            if (!TileCursor.Visible) return;
+            EmitSignal(SignalName.TileClick, GetGlobalMousePosition());
+        }
+    }
+
     public override void _Input(InputEvent @event)
     {
         if (@event is InputEventMouseMotion eventMouseMotion)
@@ -41,19 +50,11 @@ public partial class MouseInputManager : Node2D
             TileCursor.Visible = TileCursor.Position.DistanceTo(Player.Position) < Global.InteractionRadius;
             
         }
-        else if (@event.IsActionPressed("action1"))
+        else if (@event.IsActionPressed("action2"))
         {
             _playerPositionTween?.Kill();
             _playerPositionTween = Player.CreateTween();
             _playerPositionTween.TweenProperty(Player, "position", GetGlobalMousePosition(), GetGlobalMousePosition().DistanceTo(Player.Position)/Global.PlayerSpeed);
-        }
-        else if (@event.IsActionPressed("action2"))
-        {
-            if (TileCursor.Visible)
-            {
-                GD.Print("Valid Tile Clicked");
-                EmitSignal(SignalName.TileClick, GetGlobalMousePosition());
-            }
         }
     }
 }
