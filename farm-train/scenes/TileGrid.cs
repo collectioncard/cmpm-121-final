@@ -68,6 +68,7 @@ public partial class TileGrid : TileMapLayer
 		private Vector2I _tilePos;
 		private Sprite2D _tile;
 		private int _growthStage = -1;
+		private float _moistureLevel = 0;
 		
 		public void Init(int x, int y, int soilTypeIn)
 		{
@@ -77,36 +78,87 @@ public partial class TileGrid : TileMapLayer
 		
 		//Currently purely random, will make these mostly deterministic for eventually
 		//Idea get sun and moisture by using pos x, y, day, plant type, soil type, and run seed as seed, so it is "random" but deterministic, instead of randomly doing it and loading for each tile.
+		private float randomLevel(int day) {
+			string baseString = $"{day}{_plantType}{_soilType}{_tilePos.X}{_tilePos.Y}";
+			float floatValue = 0;
+			if (UInt32.TryParse(baseString, out uint uintValue)) {
+				uintValue = uintValue << (day * _tilePos.X * _tilePos.Y) % 31;
+				floatValue = (float)uintValue;
+			}else {
+				GD.Print("String can't be convereted to a Uint32");
+			}
+			floatValue /= (float)UInt32.MaxValue;
+			return floatValue;
+		}
 		private float CalcMoisture(int day)
 		{
-			return GD.Randf();
+			_moistureLevel += (randomLevel(day) * ((float)_soilType) * .3f);
+			return _moistureLevel;
 		}
 		private float CalcSun(int day)
 		{
-			return GD.Randf();
+			return randomLevel(day);
 		}
 
 		public void SowPlant(Sprite2D existingChild)
 		{
-			_plantType = 1;
-			_growthStage = 1;
 			_tile = existingChild;
-			_tile.Texture = GD.Load("res://assets/plants/plant1-1.png") as Texture2D;
+			_plantType = 0;
+			if (randomLevel(50) > 0.5) {
+				_plantType = 1;
+				_tile.Texture = GD.Load("res://assets/plants/plant1-1.png") as Texture2D;
+			} else {
+				_plantType = 2;
+				_tile.Texture = GD.Load("res://assets/plants/plant2-1.png") as Texture2D;
+			}
+			GD.Print(randomLevel(50));
+			_growthStage = 1;
 			_tile.Position = new Vector2( _tilePos.X * Global.TileWidth, _tilePos.Y * Global.TileHeight) + Global.SpriteOffset;
 		}
 
 		public void TurnDay(int day)
 		{
-			if (CalcSun(day) > .1 && CalcMoisture(day)	> .1)
-			{
-				Grow();
+			float sun = CalcSun(day);
+			float moisture = CalcMoisture(day);
+			switch (_growthStage) {
+				case 1:
+					if (sun > 0.5 && moisture > 0.5) {
+						Grow();
+					}
+					break;
+				case 2:
+					if (sun > 0.75 && moisture > 0.75) {
+						Grow();
+					}
+					break;
 			}
 		}
 
 		private void Grow()
 		{
 			_growthStage++;
-			_tile.Texture = GD.Load("res://assets/plants/plant1-2.png") as Texture2D;
+			switch (_plantType) {
+				case 1:
+					switch (_growthStage) {
+						case 2:
+							_tile.Texture = GD.Load("res://assets/plants/plant1-2.png") as Texture2D;
+							break;
+						case 3:
+							_tile.Texture = GD.Load("res://assets/plants/plant1-3.png") as Texture2D;
+							break;
+					}
+					break;
+				case 2:
+					switch (_growthStage) {
+						case 2:
+							_tile.Texture = GD.Load("res://assets/plants/plant2-2.png") as Texture2D;
+							break;
+						case 3:
+							_tile.Texture = GD.Load("res://assets/plants/plant2-3.png") as Texture2D;
+							break;
+					}
+					break;
+			}
 		}
 		
 		public int GetPlantType()
