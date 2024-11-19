@@ -4,7 +4,7 @@
 [ext_resource type="TileSet" uid="uid://c5fe35qjrbfls" path="res://scenes/tilesets/mainTileset.tres" id="2_b7cm3"]
 [ext_resource type="Script" path="res://scripts/MouseInputManager.cs" id="3_fgekt"]
 [ext_resource type="Texture2D" uid="uid://doo1lgf4mu48q" path="res://assets/tiles.png" id="3_lqs3n"]
-[ext_resource type="Script" path="res://scenes/TileGrid.cs" id="4_u4pay"]
+[ext_resource type="Script" path="res://scripts/TileGrid.cs" id="4_u4pay"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xlc1h"]
 atlas = ExtResource("3_lqs3n")
