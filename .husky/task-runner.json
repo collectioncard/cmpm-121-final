@@ -1,0 +1,27 @@
+{
+   "$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
+   "tasks": [
+      {
+         "name": "Pre-commit Test",
+         "command": "bash",
+         "args": [ "-c", "echo Husky seems to be working!" ],
+         "windows": {
+            "command": "cmd",
+            "args": ["/c", "echo Husky seems to be working!" ]
+         }
+      },
+      {
+         "name": "Run CSharpier",
+         "command": "dotnet",
+         "args": ["csharpier", "${staged}"],
+         "include": ["**/*.cs"]
+      },
+      {
+         "name": "Check If We Can Compile",
+         "cwd": "farm-train",
+         "command": "dotnet",
+         "args": ["build"],
+         "include": ["**/*.cs"]
+      }
+   ]
+}
