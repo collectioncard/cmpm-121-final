@@ -1,3 +1,4 @@
+/*
 using Godot;
 using System;
 
@@ -7,43 +8,33 @@ public partial class PlantNode : Sprite2D
 	private float growthRate;
 	private string growthConditions;
 	private int growthStages;
-	private textures[] sprites;
+	private string[] texturePaths;
 
 	private int currGrowthStage = 0;
-	float sunNeeded = 3
-	float moistureNeeded = 3
-	int numPlantsNeeded = 2
+	float sunNeeded = 3;
+	private float moistureNeeded = 3;
+	private int numPlantsNeeded = 2;
 	
 	// Constructor to initialize variables
-	public Plant(float growthRate, string growthConditions, int growthStages, textures[] sprites)
+	public Plant(float growthRate, string growthConditions, int growthStages, string[] texturePaths)
 	{
 		this.growthRate = growthRate;
 		this.growthConditions = growthConditions;
 		this.growthStages = growthStages;
-		this.sprites = sprites;
+		this.texturePaths = texturePaths;
 
 		offspring = new Plant[0];
 	}	
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-	}
-
 	public duplicateSelf() {
-		childPlant = new Plant(this.growthRate, this.growthConditions, this.growthStages, this.sprites);
+		childPlant = new Plant(this.growthRate, this.growthConditions, this.growthStages, this.texturePaths);
 		return childPlant;		
 	}
 
 	public generateOffspring( Plant parentA, Plant parentB){
 		// Some code to determine which values the plant offspring will have from parents
 
-		childPlant = new Plant(this.growthRate, this.growthConditions, this.growthStages, this.sprites);
+		childPlant = new Plant(this.growthRate, this.growthConditions, this.growthStages, this.texturePaths);
 		return childPlant;
 	}
 
@@ -66,3 +57,4 @@ public partial class PlantNode : Sprite2D
 	}
 
 }
+*/
