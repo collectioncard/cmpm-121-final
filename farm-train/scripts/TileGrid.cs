@@ -243,5 +243,19 @@ public partial class TileGrid : TileMapLayer
                 new Vector2(_tilePos.X * Global.TileWidth, _tilePos.Y * Global.TileHeight)
                 + Global.SpriteOffset;
         }
+
+        public void Harvest()
+        {
+            // Logic to remove plant here
+            _plantType = null;
+            _growthStage = -1;
+            Texture = null;
+        }
+
+        public bool CanBeHarvested()
+        {
+            // Logic to determine if a plant can be harvested here
+            return _plantType != null && _growthStage >= _plantType.GrowthStages - 1;
+        }
     }
 }
