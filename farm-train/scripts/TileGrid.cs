@@ -55,7 +55,6 @@ public partial class TileGrid : TileMapLayer
     public override void _Ready()
     {
         _bt = new BetterTerrain(this);
-
         /* TODO: Rework Later
          Define plants ?elsewhere? then read and generate plant classes*/
         Plant p1 = new Plant();
@@ -76,7 +75,13 @@ public partial class TileGrid : TileMapLayer
         switch (tool.ToolName)
         {
             case "Open_Hand":
-                //Do nothing
+                if (
+                    QueryPlantTile(tilePos.X, tilePos.Y) != null
+                    && QueryPlantTile(tilePos.X, tilePos.Y).CanBeHarvested()
+                )
+                {
+                    _plantGrid[tilePos.X, tilePos.Y].Harvest();
+                }
                 break;
             case "Hoe":
                 if (_bt.GetCell(tilePos) != 5)
@@ -84,7 +89,6 @@ public partial class TileGrid : TileMapLayer
                     _bt.SetCell(tilePos, 5);
                     _bt.UpdateTerrainCell(tilePos);
                 }
-
                 break;
             case "Seed_One":
                 // Only place if the tile is null plant
@@ -103,7 +107,7 @@ public partial class TileGrid : TileMapLayer
                 )
                 {
                     _plantGrid[tilePos.X, tilePos.Y].SowPlant(Plant.CROSSBREED);
-                    DayPassedEventHandler crossBreed = null; //TODO: Look back at this. Is there a better way?
+                    DayPassedEventHandler crossBreed = null; //TODO: Look back at this. Is there a better way? Main issue is if we want to disconnect on demand.
                     crossBreed = (day) =>
                     {
                         if (
@@ -250,12 +254,13 @@ public partial class TileGrid : TileMapLayer
             _plantType = null;
             _growthStage = -1;
             Texture = null;
+            //TODO: Tie into tool/inven system, return items? event listener?
         }
 
         public bool CanBeHarvested()
         {
             // Logic to determine if a plant can be harvested here
-            return _plantType != null && _growthStage >= _plantType.GrowthStages - 1;
+            return _plantType != null && _growthStage == _plantType.GrowthStages;
         }
     }
 }

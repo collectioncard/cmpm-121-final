@@ -3,6 +3,7 @@ using Godot;
 
 public partial class Global : Node
 {
+    //TODO: Spread these vars to the classes that actually need them
     public static uint Seed;
     public static RandomNumberGenerator Rng = new RandomNumberGenerator();
     public const int PlantTypes = 2;
