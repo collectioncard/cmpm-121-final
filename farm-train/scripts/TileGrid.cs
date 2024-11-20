@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using FarmTrain.classes;
 using Godot;
 
 public partial class TileGrid : TileMapLayer
@@ -68,29 +69,34 @@ public partial class TileGrid : TileMapLayer
         _plants[0] = p1;
     }
 
-    public void TileClick(Vector2 pos, int type)
+    public void TileClick(Vector2 pos, Tool tool)
     {
-        Vector2I tilePos = LocalToMap(pos);
-        switch (type) //TODO: Refactor seems possible. Waiting for tool and inventory system
+        var tilePos = LocalToMap(pos);
+
+        switch (tool.ToolName)
         {
-            case 0: //normal till
+            case "Open_Hand":
+                //Do nothing
+                break;
+            case "Hoe":
                 if (_bt.GetCell(tilePos) != 5)
                 {
                     _bt.SetCell(tilePos, 5);
                     _bt.UpdateTerrainCell(tilePos);
                 }
-                else
-                {
-                    if (
-                        GetPlantTile(tilePos.X, tilePos.Y).GetGrowthStage() == -1 /*TODO: NO!!!!*/
-                    )
-                    {
-                        _plantGrid[tilePos.X, tilePos.Y].SowPlant(_plants[0]);
-                        DayPassed += _plantGrid[tilePos.X, tilePos.Y].TurnDay;
-                    }
-                }
+
                 break;
-            case 1: //propagator
+            case "Seed_One":
+                // Only place if the tile is type 5
+                if (GetPlantTile(tilePos.X, tilePos.Y).GetGrowthStage() != -1)
+                    return;
+                _plantGrid[tilePos.X, tilePos.Y].SowPlant(_plants[0]);
+                DayPassed += _plantGrid[tilePos.X, tilePos.Y].TurnDay;
+                break;
+            case "Seed_Twp":
+                GD.Print("Seed 2 Tool not implemented");
+                break;
+            case "Cross_Breed_Tool":
                 if (
                     _bt.GetCell(tilePos) == 5
                     && GetPlantTile(tilePos.X, tilePos.Y).GetGrowthStage() == -1
@@ -113,6 +119,7 @@ public partial class TileGrid : TileMapLayer
                     };
                     DayPassed += crossBreed;
                 }
+
                 break;
         }
     }
@@ -159,6 +166,7 @@ public partial class TileGrid : TileMapLayer
         }
 
         #region Daily Conditions
+
         private void Grow()
         {
             if (_growthStage >= _plantType.GrowthStages)
@@ -199,6 +207,7 @@ public partial class TileGrid : TileMapLayer
         {
             return RandomLevel(day);
         }
+
         #endregion
 
         //Performs clone or crossbreed event based on neighbors
@@ -218,6 +227,7 @@ public partial class TileGrid : TileMapLayer
                 neighbors = neighbors.OrderBy(e => rng.NextDouble()).ToArray();
                 SowPlant(Plant.ChooseOffspring(neighbors[0]._plantType, neighbors[1]._plantType));
             }
+
             return true;
         }
 
