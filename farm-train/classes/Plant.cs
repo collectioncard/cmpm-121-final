@@ -1,13 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Godot;
-using Godot.Collections;
 using Array = System.Array;
 
 public partial class Plant : Resource
 {
-    public string Name;
+    private string _name;
     private Plant[] _offspring;
     private float _growthRate;
 
@@ -17,7 +15,14 @@ public partial class Plant : Resource
 
     private float _sunNeeded = .5f;
     private float _moistureNeeded = .5f;
-    private int _numPlantsNeeded = 0;
+    private int _numPlantsNeeded;
+
+    public static readonly Plant CROSSBREED = new Plant().Init(
+        "Crossbreeder",
+        new[] { "res://assets/plants/idkwhattocallthis.png" },
+        0,
+        -1
+    );
 
     //Godot needs a paramless constructor
     public Plant()
@@ -28,13 +33,19 @@ public partial class Plant : Resource
     public Plant Init(string name, string[] texturePaths, float growthRate, int growthStages)
     {
         _offspring[0] = this;
+        _name = name;
         TexturePaths = texturePaths;
         _growthRate = growthRate;
         GrowthStages = growthStages;
         return this;
     }
 
-    public void addOffspring(Plant newOffspring)
+    public string GetTypeName()
+    {
+        return _name;
+    }
+
+    public void AddOffspring(Plant newOffspring)
     {
         if (_offspring.Contains(newOffspring))
             return;
@@ -53,7 +64,7 @@ public partial class Plant : Resource
         Plant[] validOffspring = parentA._offspring.Intersect(parentB._offspring).ToArray();
         if (validOffspring.Length == 0)
             return parentA;
-        int rIndex = GD.RandRange(0, validOffspring.Length - 1); //TODO: Effective seeding
+        int rIndex = Global.Rng.RandiRange(0, validOffspring.Length - 1);
         return validOffspring[rIndex];
     }
 

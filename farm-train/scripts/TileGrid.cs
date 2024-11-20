@@ -87,8 +87,8 @@ public partial class TileGrid : TileMapLayer
 
                 break;
             case "Seed_One":
-                // Only place if the tile is type 5
-                if (GetPlantTile(tilePos.X, tilePos.Y).GetGrowthStage() != -1)
+                // Only place if the tile is null plant
+                if (GetPlantTile(tilePos.X, tilePos.Y).GetPlantType() != null)
                     return;
                 _plantGrid[tilePos.X, tilePos.Y].SowPlant(_plants[0]);
                 DayPassed += _plantGrid[tilePos.X, tilePos.Y].TurnDay;
@@ -99,27 +99,24 @@ public partial class TileGrid : TileMapLayer
             case "Cross_Breed_Tool":
                 if (
                     _bt.GetCell(tilePos) == 5
-                    && GetPlantTile(tilePos.X, tilePos.Y).GetGrowthStage() == -1
+                    && GetPlantTile(tilePos.X, tilePos.Y).GetPlantType() == null
                 )
                 {
-                    _plantGrid[tilePos.X, tilePos.Y].SowPlant();
+                    _plantGrid[tilePos.X, tilePos.Y].SowPlant(Plant.CROSSBREED);
                     DayPassedEventHandler crossBreed = null; //TODO: Look back at this. Is there a better way?
                     crossBreed = (day) =>
                     {
-                        GD.Print(day);
                         if (
                             _plantGrid[tilePos.X, tilePos.Y]
                                 .Propagate(day, QueryNeighborTiles(tilePos.X, tilePos.Y))
                         )
                         {
-                            GD.Print("Cross Breed!");
                             DayPassed += _plantGrid[tilePos.X, tilePos.Y].TurnDay;
                             DayPassed -= crossBreed;
                         }
                     };
                     DayPassed += crossBreed;
                 }
-
                 break;
         }
     }
@@ -166,7 +163,6 @@ public partial class TileGrid : TileMapLayer
         }
 
         #region Daily Conditions
-
         private void Grow()
         {
             if (_growthStage >= _plantType.GrowthStages)
@@ -207,27 +203,34 @@ public partial class TileGrid : TileMapLayer
         {
             return RandomLevel(day);
         }
-
         #endregion
 
         //Performs clone or crossbreed event based on neighbors
         public bool Propagate(int day, PlantTile[] neighbors)
         {
-            if (RandomLevel(day) < .5f)
+            if (RandomLevel(day) < .5f) //only do a propagation attempt 50% of the time
                 return false;
-            PlantTile[] validNeighbors = neighbors.Where(tile => tile.IsMature()).ToArray();
-            if (validNeighbors.Length == 0)
-                return false;
-
-            if (validNeighbors.Length == 1)
-                SowPlant(validNeighbors[0]._plantType);
-            if (validNeighbors.Length > 1)
+            PlantTile[] validNeighbors = neighbors.Where(tile => tile.IsMature()).ToArray(); //out of the non-null neighbors only mature are valid
+            switch (validNeighbors.Length)
             {
-                var rng = new Random((int)Global.Seed); //Shuffle neighbors, VERY naive random shuffle TODO: Effective seeding
-                neighbors = neighbors.OrderBy(e => rng.NextDouble()).ToArray();
-                SowPlant(Plant.ChooseOffspring(neighbors[0]._plantType, neighbors[1]._plantType));
+                //no valid = end attempt
+                case 0:
+                    return false;
+                //only 1 valid causes a cloning event
+                case 1:
+                    SowPlant(validNeighbors[0]._plantType);
+                    break;
+                //>= 2 causes a random pair of parents and offspring to be picked
+                case > 1:
+                    validNeighbors = validNeighbors.OrderBy(e => Global.Rng.Randf()).ToArray();
+                    SowPlant(
+                        Plant.ChooseOffspring(
+                            validNeighbors[0]._plantType,
+                            validNeighbors[1]._plantType
+                        )
+                    );
+                    break;
             }
-
             return true;
         }
 
@@ -236,15 +239,6 @@ public partial class TileGrid : TileMapLayer
             _plantType = plantType;
             _growthStage = 1;
             Texture = GD.Load<Texture2D>(plantType.TexturePaths[_growthStage - 1]);
-            Position =
-                new Vector2(_tilePos.X * Global.TileWidth, _tilePos.Y * Global.TileHeight)
-                + Global.SpriteOffset;
-        }
-
-        public void SowPlant()
-        {
-            _growthStage = 0; //TODO: NO!!!!
-            Texture = GD.Load<Texture2D>("res://assets/plants/idkwhattocallthis.png");
             Position =
                 new Vector2(_tilePos.X * Global.TileWidth, _tilePos.Y * Global.TileHeight)
                 + Global.SpriteOffset;

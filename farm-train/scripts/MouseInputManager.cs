@@ -38,18 +38,17 @@ public partial class MouseInputManager : Node2D
         _make_TileCursor();
         _make_Player();
         _initializeTools();
-        GetNode<Label>("%ToolLabel").Text = "Current Tool: " + _tools[_selectedToolIndex].ToolName;
     }
 
     private void _initializeTools()
     {
         _tools = new List<Tool>
         {
-            new Tool("Open_Hand", false),
-            new Tool("Hoe", false),
-            new Tool("Seed_One", false),
-            new Tool("Seed_two", true),
-            new Tool("Cross_Breed_Tool", true),
+            new Tool("Open_Hand", false, null),
+            new Tool("Hoe", false, "res://assets/trowel.png"),
+            new Tool("Seed_One", false, "res://assets/plants/plant1-0.png"),
+            new Tool("Seed_two", true, "res://assets/plants/plant2-0.png"),
+            new Tool("Cross_Breed_Tool", false, "res://assets/plants/idkwhattocallthis.png"),
         };
         _selectedToolIndex = 0;
     }
@@ -89,7 +88,7 @@ public partial class MouseInputManager : Node2D
             );
         }
         // Change the selected tool
-        else if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
+        else if (@event is InputEventMouseButton { Pressed: true } eventMouseButton)
         {
             if (eventMouseButton.ButtonIndex == MouseButton.WheelUp)
             {
@@ -105,8 +104,7 @@ public partial class MouseInputManager : Node2D
                     _selectedToolIndex = (_selectedToolIndex - 1 + _tools.Count) % _tools.Count;
                 } while (_tools[_selectedToolIndex].IsDisabled);
             }
-            GetNode<Label>("%ToolLabel").Text =
-                "Current Tool: " + _tools[_selectedToolIndex].ToolName;
+            GetNode<Sprite2D>("%ToolTexture").Texture = _tools[_selectedToolIndex]._texture;
         }
     }
 }

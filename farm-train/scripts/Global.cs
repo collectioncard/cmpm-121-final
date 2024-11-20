@@ -4,6 +4,7 @@ using Godot;
 public partial class Global : Node
 {
     public static uint Seed;
+    public static RandomNumberGenerator Rng = new RandomNumberGenerator();
     public const int PlantTypes = 2;
     public const int TileWidth = 16;
     public const int TileHeight = 16;
@@ -16,6 +17,7 @@ public partial class Global : Node
     {
         //Seed = GD.Randi();
         Seed = 1;
+        Rng.Seed = Seed;
     }
 
     public static Vector2 GetTileAtPos(Vector2 globalPos)

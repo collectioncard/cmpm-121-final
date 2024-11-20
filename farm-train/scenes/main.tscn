@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=4 uid="uid://d14wjww6re8oi"]
+[gd_scene load_steps=8 format=4 uid="uid://d14wjww6re8oi"]
 
 [ext_resource type="Script" path="res://scripts/Camera.cs" id="1_6nw0d"]
 [ext_resource type="TileSet" uid="uid://c5fe35qjrbfls" path="res://scenes/tilesets/mainTileset.tres" id="2_b7cm3"]
 [ext_resource type="Script" path="res://scripts/MouseInputManager.cs" id="3_fgekt"]
+[ext_resource type="Texture2D" uid="uid://bakp2lilgrggi" path="res://assets/itemFrame.png" id="3_fn6l6"]
 [ext_resource type="Texture2D" uid="uid://doo1lgf4mu48q" path="res://assets/tiles.png" id="3_lqs3n"]
 [ext_resource type="Script" path="res://scripts/TileGrid.cs" id="4_u4pay"]
 
@@ -23,11 +24,18 @@ text = "Day: 0"
 
 [node name="ToolLabel" type="Label" parent="UI"]
 unique_name_in_owner = true
-offset_left = -4.0
-offset_top = 29.0
-offset_right = 96.0
-offset_bottom = 52.0
+offset_top = 21.0
+offset_right = 102.0
+offset_bottom = 44.0
 text = "Current Tool:"
+
+[node name="ToolTexture" type="Sprite2D" parent="UI/ToolLabel"]
+unique_name_in_owner = true
+position = Vector2(109, 14)
+
+[node name="ToolFrame" type="Sprite2D" parent="UI/ToolLabel"]
+position = Vector2(109, 14)
+texture = ExtResource("3_fn6l6")
 
 [node name="Train" type="Sprite2D" parent="."]
 z_index = 1
