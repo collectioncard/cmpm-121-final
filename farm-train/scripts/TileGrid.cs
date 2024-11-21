@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using FarmTrain.classes;
 using Godot;
+using Godot.NativeInterop;
 
 public partial class TileGrid : TileMapLayer
 {
@@ -15,6 +16,9 @@ public partial class TileGrid : TileMapLayer
 
     [Signal]
     public delegate void DayPassedEventHandler(int prevDay);
+
+    [Signal]
+    public delegate void UnlockEventHandler(int id);
 
     //Creates a plantTile, adds to tree and inits
     private PlantTile AddPlantTile(int x, int y)
@@ -55,17 +59,27 @@ public partial class TileGrid : TileMapLayer
     public override void _Ready()
     {
         _bt = new BetterTerrain(this);
+
         /* TODO: Rework Later
          Define plants ?elsewhere? then read and generate plant classes*/
-        Plant p1 = new Plant();
+        _plants[0] = Plant.CROSSBREED;
+        _plants[1] = new Plant();
         string[] plant1Textures =
         {
             "res://assets/plants/plant1-1.png",
             "res://assets/plants/plant1-2.png",
             "res://assets/plants/plant1-3.png",
         };
-        p1.Init("Plant1", plant1Textures, 1, 3);
-        _plants[0] = p1;
+        _plants[1].Init(1, plant1Textures, 1, 3);
+        _plants[2] = new Plant();
+        string[] plant2Textures =
+        {
+            "res://assets/plants/plant2-1.png",
+            "res://assets/plants/plant2-2.png",
+            "res://assets/plants/plant2-3.png",
+        };
+        _plants[2].Init(2, plant2Textures, 1, 3);
+        _plants[1].AddOffspring(_plants[2]);
     }
 
     public void TileClick(Vector2 pos, Tool tool)
@@ -80,25 +94,24 @@ public partial class TileGrid : TileMapLayer
                     && QueryPlantTile(tilePos.X, tilePos.Y).CanBeHarvested()
                 )
                 {
+                    DayPassed -= _plantGrid[tilePos.X, tilePos.Y].TurnDay;
                     _plantGrid[tilePos.X, tilePos.Y].Harvest();
                 }
                 break;
             case "Hoe":
                 if (_bt.GetCell(tilePos) != 5)
                 {
+                    AddPlantTile(tilePos.X, tilePos.Y);
                     _bt.SetCell(tilePos, 5);
                     _bt.UpdateTerrainCell(tilePos);
                 }
                 break;
             case "Seed_One":
                 // Only place if the tile is null plant
-                if (GetPlantTile(tilePos.X, tilePos.Y).GetPlantType() != null)
-                    return;
-                _plantGrid[tilePos.X, tilePos.Y].SowPlant(_plants[0]);
-                DayPassed += _plantGrid[tilePos.X, tilePos.Y].TurnDay;
+                PlantSeed(tilePos, 1);
                 break;
             case "Seed_Twp":
-                GD.Print("Seed 2 Tool not implemented");
+                PlantSeed(tilePos, 2);
                 break;
             case "Cross_Breed_Tool":
                 if (
@@ -115,6 +128,10 @@ public partial class TileGrid : TileMapLayer
                                 .Propagate(day, QueryNeighborTiles(tilePos.X, tilePos.Y))
                         )
                         {
+                            EmitSignal(
+                                SignalName.Unlock,
+                                _plantGrid[tilePos.X, tilePos.Y].GetPlantType().GetTypeName()
+                            );
                             DayPassed += _plantGrid[tilePos.X, tilePos.Y].TurnDay;
                             DayPassed -= crossBreed;
                         }
@@ -133,6 +150,17 @@ public partial class TileGrid : TileMapLayer
             GetNode<Label>("%DayLabel").Text = "Day: " + _day;
             EmitSignal(SignalName.DayPassed, _day);
         }
+    }
+
+    private void PlantSeed(Vector2I tilePos, int plantIndex)
+    {
+        if (
+            QueryPlantTile(tilePos.X, tilePos.Y) == null
+            || QueryPlantTile(tilePos.X, tilePos.Y).GetPlantType() != null
+        )
+            return;
+        _plantGrid[tilePos.X, tilePos.Y].SowPlant(_plants[plantIndex]);
+        DayPassed += _plantGrid[tilePos.X, tilePos.Y].TurnDay;
     }
 
     private partial class PlantTile : Sprite2D
@@ -178,7 +206,7 @@ public partial class TileGrid : TileMapLayer
 
         public void TurnDay(int day)
         {
-            if (_plantType.GrowthCheck(CalcSun(day), CalcMoisture(day), null))
+            if (_plantType.GrowthCheck(CalcSun(day), CalcMoisture(day)))
             {
                 Grow();
             }

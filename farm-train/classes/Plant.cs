@@ -5,7 +5,7 @@ using Array = System.Array;
 
 public partial class Plant : Resource
 {
-    private string _name;
+    private int _id;
     private Plant[] _offspring;
     private float _growthRate;
 
@@ -18,7 +18,7 @@ public partial class Plant : Resource
     private int _numPlantsNeeded;
 
     public static readonly Plant CROSSBREED = new Plant().Init(
-        "Crossbreeder",
+        0,
         new[] { "res://assets/plants/idkwhattocallthis.png" },
         0,
         -1
@@ -30,19 +30,19 @@ public partial class Plant : Resource
         _offspring = new Plant[1];
     }
 
-    public Plant Init(string name, string[] texturePaths, float growthRate, int growthStages)
+    public Plant Init(int id, string[] texturePaths, float growthRate, int growthStages)
     {
         _offspring[0] = this;
-        _name = name;
+        _id = id;
         TexturePaths = texturePaths;
         _growthRate = growthRate;
         GrowthStages = growthStages;
         return this;
     }
 
-    public string GetTypeName()
+    public int GetTypeName()
     {
-        return _name;
+        return _id;
     }
 
     public void AddOffspring(Plant newOffspring)
@@ -51,11 +51,6 @@ public partial class Plant : Resource
             return;
         Array.Resize(ref _offspring, _offspring.Length + 1);
         _offspring[_offspring.Length - 1] = newOffspring;
-    }
-
-    private Plant Clone()
-    {
-        return (Plant)this.MemberwiseClone(); //Don't envision using this, but eventually make this a deep copy.
     }
 
     public static Plant ChooseOffspring(Plant parentA, Plant parentB)
@@ -68,25 +63,20 @@ public partial class Plant : Resource
         return validOffspring[rIndex];
     }
 
-    public bool GrowthCheck(float sun, float moisture, Plant[] nearbyPlants)
+    public bool GrowthCheck(float sun, float moisture)
     {
         bool checkSunLevels = false;
         bool checkMoistureLevels = false;
-        bool checkNearbyPlants = false;
 
-        if (sun >= this._sunNeeded)
+        if (sun >= _sunNeeded)
         {
             checkSunLevels = true;
         }
-        if (moisture >= this._moistureNeeded)
+        if (moisture >= _moistureNeeded)
         {
             checkMoistureLevels = true;
         }
-        if (true || nearbyPlants.Length >= this._numPlantsNeeded)
-        {
-            checkNearbyPlants = true;
-        }
 
-        return checkSunLevels && checkMoistureLevels && checkNearbyPlants;
+        return checkSunLevels && checkMoistureLevels;
     }
 }

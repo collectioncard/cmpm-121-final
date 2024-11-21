@@ -35,9 +35,22 @@ public partial class MouseInputManager : Node2D
     public override void _Ready()
     {
         TileClick += GetNode<TileGrid>("TileGrid").TileClick;
+        GetNode<TileGrid>("TileGrid").Unlock += Unlock;
         _make_TileCursor();
         _make_Player();
         _initializeTools();
+    }
+
+    private void Unlock(int id)
+    {
+        GD.Print(id);
+        switch (id)
+        {
+            case 2:
+                _tools[4].IsDisabled = false;
+                GetNode<Win>("Win").playerWin();
+                break;
+        }
     }
 
     private void _initializeTools()
@@ -46,9 +59,9 @@ public partial class MouseInputManager : Node2D
         {
             new Tool("Open_Hand", false, null),
             new Tool("Hoe", false, "res://assets/trowel.png"),
+            new Tool("Cross_Breed_Tool", false, "res://assets/plants/idkwhattocallthis.png"),
             new Tool("Seed_One", false, "res://assets/plants/plant1-0.png"),
             new Tool("Seed_two", true, "res://assets/plants/plant2-0.png"),
-            new Tool("Cross_Breed_Tool", false, "res://assets/plants/idkwhattocallthis.png"),
         };
         _selectedToolIndex = 0;
     }
