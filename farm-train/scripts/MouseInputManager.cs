@@ -89,16 +89,12 @@ public partial class MouseInputManager : Node2D
         // Move the player to the selected area
         else if (@event.IsActionPressed("action2"))
         {
-            _playerPositionTween?.Kill();
-            _playerPositionTween = Player.CreateTween();
-            _playerPositionTween.TweenProperty(
-                Player,
-                "position",
-                (Global.GetTileAtPos(GetGlobalMousePosition()) + Global.SpriteOffset),
-                (Global.GetTileAtPos(GetGlobalMousePosition()) + Global.SpriteOffset).DistanceTo(
-                    Player.Position
-                ) / Global.PlayerSpeed
-            );
+            _movePlayer(GetGlobalMousePosition());
+        }
+        // Move the player by WASD or Arrow
+        else if (@event is InputEventKey keyEvent && keyEvent.Pressed)
+        {
+            _keyMovement(keyEvent);
         }
         // Change the selected tool
         else if (@event is InputEventMouseButton { Pressed: true } eventMouseButton)
@@ -118,6 +114,47 @@ public partial class MouseInputManager : Node2D
                 } while (_tools[_selectedToolIndex].IsDisabled);
             }
             GetNode<Sprite2D>("%ToolTexture").Texture = _tools[_selectedToolIndex]._texture;
+        }
+    }
+
+    private void _movePlayer(Vector2 newPosition)
+    {
+        _playerPositionTween?.Kill();
+        _playerPositionTween = Player.CreateTween();
+        _playerPositionTween.TweenProperty(
+            Player,
+            "position",
+            (Global.GetTileAtPos(newPosition) + Global.SpriteOffset),
+            (Global.GetTileAtPos(newPosition) + Global.SpriteOffset).DistanceTo(Player.Position)
+                / Global.PlayerSpeed
+        );
+    }
+
+    private void _keyMovement(InputEventKey keyEvent)
+    {
+        if (keyEvent.Keycode == Key.W || keyEvent.Keycode == Key.Up)
+        {
+            var up = new Godot.Vector2(0, -Global.TileHeight);
+            var newPosition = Player.Position + up;
+            _movePlayer(newPosition);
+        }
+        else if (keyEvent.Keycode == Key.A || keyEvent.Keycode == Key.Left)
+        {
+            var left = new Godot.Vector2(-Global.TileWidth, 0);
+            var newPosition = Player.Position + left;
+            _movePlayer(newPosition);
+        }
+        else if (keyEvent.Keycode == Key.S || keyEvent.Keycode == Key.Down)
+        {
+            var down = new Godot.Vector2(0, Global.TileHeight);
+            var newPosition = Player.Position + down;
+            _movePlayer(newPosition);
+        }
+        else if (keyEvent.Keycode == Key.D || keyEvent.Keycode == Key.Right)
+        {
+            var right = new Godot.Vector2(Global.TileWidth, 0);
+            var newPosition = Player.Position + right;
+            _movePlayer(newPosition);
         }
     }
 }
