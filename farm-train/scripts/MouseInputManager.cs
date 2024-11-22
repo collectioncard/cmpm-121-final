@@ -43,7 +43,7 @@ public partial class MouseInputManager : Node2D
 
     private void Unlock(int id)
     {
-        GD.Print(id);
+        GD.Print("Unlock: " + id);
         switch (id)
         {
             case 2:
