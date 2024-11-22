@@ -18,6 +18,8 @@ public partial class TileGrid : TileMapLayer
         public float Moisture { get; set; }
         public int GrowthStage { get; set; }
 
+        public DayPassedEventHandler TurnDay;
+
         public Plant GetPlantType()
         {
             return PlantIndex == -1 ? null : Global._plants[PlantIndex];
@@ -29,23 +31,16 @@ public partial class TileGrid : TileMapLayer
         }
 
         #region Daily Conditions
-        private void Grow()
+
+        public void Grow()
         {
             if (IsMature())
                 return;
+            GD.Print("Grow");
+            GD.Print(GrowthStage);
             //TODO: Make growth reduce moisture?
             GrowthStage++;
             PlantSprite.Texture = GD.Load<Texture2D>(GetPlantType().TexturePaths[GrowthStage - 1]);
-        }
-
-        public (bool, TileInfo) TurnDay(int day)
-        {
-            if (GetPlantType().GrowthCheck(CalcSun(day), CalcMoisture(day)))
-            {
-                Grow();
-            }
-
-            return (IsMature(), this);
         }
 
         //Idea get sun and moisture by using pos x, y, day, plant type, soil type, and run seed as seed, so it is "random" but deterministic, instead of randomly doing it and loading for each tile.
@@ -60,14 +55,14 @@ public partial class TileGrid : TileMapLayer
             return (float)result;
         }
 
-        private float CalcMoisture(int day)
+        public float CalcMoisture(int day)
         {
             //TODO: Soil types determine possible moisture vals
             Moisture += RandomLevel(day) * SoilType * .3f;
             return Moisture;
         }
 
-        private float CalcSun(int day)
+        public float CalcSun(int day)
         {
             return RandomLevel(day);
         }
@@ -161,9 +156,9 @@ public partial class TileGrid : TileMapLayer
     }
 
     //Either returns the existing plantTile or returns a new one at x,y
-    private TileInfo GetPlantTile(int x, int y)
+    private ref TileInfo GetPlantTile(int x, int y)
     {
-        return _tileInfo[CoordToIndex(x, y)];
+        return ref _tileInfo[CoordToIndex(x, y)];
     }
 
     //Returns plantTile it exists else returns null
@@ -206,10 +201,10 @@ public partial class TileGrid : TileMapLayer
                 )
                 {
                     GD.Print("Harvest!");
-                    TileInfo curTile = GetPlantTile(tilePos.X, tilePos.Y);
-                    //DayPassed -= curTile.TurnDay;
-                    var newTile = curTile.Harvest();
-                    _tileInfo[CoordToIndex(tilePos.X, tilePos.Y)] = newTile;
+                    ref TileInfo curTile = ref GetPlantTile(tilePos.X, tilePos.Y);
+                    curTile.Harvest();
+                    DayPassed -= curTile.TurnDay;
+                    //_tileInfo[CoordToIndex(tilePos.X, tilePos.Y)] = newTile;
                 }
                 break;
             case "Hoe":
@@ -224,7 +219,7 @@ public partial class TileGrid : TileMapLayer
                 // Only place if the tile is null plant
                 PlantSeed(tilePos, 1);
                 break;
-            case "Seed_Twp":
+            case "Seed_two":
                 PlantSeed(tilePos, 2);
                 break;
             case "Cross_Breed_Tool":
@@ -234,28 +229,28 @@ public partial class TileGrid : TileMapLayer
                 )
                 {
                     GD.Print("PLacing crossbreed");
-                    TileInfo curTile = GetPlantTile(tilePos.X, tilePos.Y);
-                    curTile.SowPlant(Plant.CROSSBREED);
+                    _tileInfo[CoordToIndex(tilePos.X, tilePos.Y)].SowPlant(Plant.CROSSBREED);
                     DayPassedEventHandler crossBreed = null; //TODO: Look back at this. Is there a better way? Main issue is if we want to disconnect on demand.
                     crossBreed = (day) =>
                     {
-                        if (curTile.Propagate(day, QueryNeighborTiles(tilePos.X, tilePos.Y)))
+                        GD.Print("Crossbreed event");
+                        if (
+                            GetPlantTile(tilePos.X, tilePos.Y)
+                                .Propagate(day, QueryNeighborTiles(tilePos.X, tilePos.Y))
+                        )
                         {
-                            EmitSignal(SignalName.Unlock, curTile.GetPlantType().GetTypeName());
-                            DayPassedEventHandler dayPassed = null; //TODO: Look back at this. Is there a better way? Main issue is if we want to disconnect on demand.
-                            dayPassed = (newDay) =>
-                            {
-                                var (isMature, newTileInfo) = curTile.TurnDay(newDay);
-                                _tileInfo[CoordToIndex(tilePos.X, tilePos.Y)] = newTileInfo;
-                                if (isMature)
-                                    DayPassed -= dayPassed;
-                            };
-                            DayPassed += dayPassed;
+                            EmitSignal(
+                                SignalName.Unlock,
+                                GetPlantTile(tilePos.X, tilePos.Y).GetPlantType().GetTypeName()
+                            );
+                            _tileInfo[CoordToIndex(tilePos.X, tilePos.Y)].TurnDay =
+                                CreateDayPassHandler(_tileInfo[CoordToIndex(tilePos.X, tilePos.Y)]);
+                            DayPassed += _tileInfo[CoordToIndex(tilePos.X, tilePos.Y)].TurnDay;
                             DayPassed -= crossBreed;
                         }
                     };
                     DayPassed += crossBreed;
-                    _tileInfo[CoordToIndex(tilePos.X, tilePos.Y)] = curTile;
+                    //_tileInfo[CoordToIndex(tilePos.X, tilePos.Y)] = curTile;
                 }
                 break;
         }
@@ -275,18 +270,37 @@ public partial class TileGrid : TileMapLayer
     {
         if (_bt.GetCell(tilePos) == 5 && GetPlantTile(tilePos.X, tilePos.Y).GetPlantType() == null)
         {
-            TileInfo curTile = GetPlantTile(tilePos.X, tilePos.Y);
+            ref TileInfo curTile = ref GetPlantTile(tilePos.X, tilePos.Y);
             curTile.SowPlant(Global._plants[plantIndex]);
-            DayPassedEventHandler dayPassed = null; //TODO: Look back at this. Is there a better way? Main issue is if we want to disconnect on demand.
-            dayPassed = (day) =>
-            {
-                var (isMature, newTileInfo) = curTile.TurnDay(day);
-                _tileInfo[CoordToIndex(tilePos.X, tilePos.Y)] = newTileInfo;
-                if (isMature)
-                    DayPassed -= dayPassed;
-            };
-            DayPassed += dayPassed;
-            _tileInfo[CoordToIndex(tilePos.X, tilePos.Y)] = curTile;
+
+            curTile.TurnDay = CreateDayPassHandler(curTile);
+            DayPassed += curTile.TurnDay;
         }
+    }
+
+    private DayPassedEventHandler CreateDayPassHandler(TileInfo tileInfo)
+    {
+        return (day) =>
+        {
+            GD.Print("Day: " + day);
+            GD.Print(
+                _tileInfo[CoordToIndex(tileInfo.Position.X, tileInfo.Position.Y)]
+                    .GetPlantType()
+                    .GetTypeName()
+            );
+            if (
+                _tileInfo[CoordToIndex(tileInfo.Position.X, tileInfo.Position.Y)]
+                    .GetPlantType()
+                    .GrowthCheck(
+                        _tileInfo[CoordToIndex(tileInfo.Position.X, tileInfo.Position.Y)]
+                            .CalcSun(day),
+                        _tileInfo[CoordToIndex(tileInfo.Position.X, tileInfo.Position.Y)]
+                            .CalcMoisture(day)
+                    )
+            )
+            {
+                _tileInfo[CoordToIndex(tileInfo.Position.X, tileInfo.Position.Y)].Grow();
+            }
+        };
     }
 }
