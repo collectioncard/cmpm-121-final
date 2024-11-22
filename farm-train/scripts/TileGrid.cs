@@ -38,14 +38,14 @@ public partial class TileGrid : TileMapLayer
             PlantSprite.Texture = GD.Load<Texture2D>(GetPlantType().TexturePaths[GrowthStage - 1]);
         }
 
-        public bool TurnDay(int day)
+        public (bool, TileInfo) TurnDay(int day)
         {
             if (GetPlantType().GrowthCheck(CalcSun(day), CalcMoisture(day)))
             {
                 Grow();
             }
-            _tileInfo[Position.X + Position.Y * Global.TileMapSize.X] = this;
-            return IsMature();
+
+            return (IsMature(), this);
         }
 
         //Idea get sun and moisture by using pos x, y, day, plant type, soil type, and run seed as seed, so it is "random" but deterministic, instead of randomly doing it and loading for each tile.
@@ -113,25 +113,23 @@ public partial class TileGrid : TileMapLayer
                 + Global.SpriteOffset;
         }
 
-        public void Harvest()
+        public TileInfo Harvest()
         {
             // Logic to remove plant here
             PlantIndex = -1;
             GrowthStage = -1;
             PlantSprite.Texture = null;
             //TODO: Tie into tool/inven system, return items? event listener?
-            _tileInfo[Position.X + Position.Y * Global.TileMapSize.X] = this;
+            return this;
         }
     }
 
-    public static TileInfo?[] _tileInfo = new TileInfo?[
-        Global.TileMapSize.X * Global.TileMapSize.Y
-    ];
+    private TileInfo[] _tileInfo = new TileInfo[Global.TileMapSize.X * Global.TileMapSize.Y];
 
     private int _day;
     private BetterTerrain _bt;
 
-    private int coordToIndex(int x, int y)
+    private int CoordToIndex(int x, int y)
     {
         return x + y * Global.TileMapSize.X;
     }
@@ -145,7 +143,7 @@ public partial class TileGrid : TileMapLayer
     //Creates a plantTile, adds to tree and inits
     private TileInfo AddTile(int x, int y)
     {
-        int idx = coordToIndex(x, y);
+        int idx = CoordToIndex(x, y);
         var temp = new Sprite2D();
         AddChild(temp);
 
@@ -165,7 +163,7 @@ public partial class TileGrid : TileMapLayer
     //Either returns the existing plantTile or returns a new one at x,y
     private TileInfo GetPlantTile(int x, int y)
     {
-        return _tileInfo[coordToIndex(x, y)] ?? AddTile(x, y);
+        return _tileInfo[CoordToIndex(x, y)];
     }
 
     //Returns plantTile it exists else returns null
@@ -173,7 +171,7 @@ public partial class TileGrid : TileMapLayer
     {
         if (x < 0 || x >= Global.TileMapSize.X || y < 0 || y >= Global.TileMapSize.Y)
             return null;
-        return _tileInfo[coordToIndex(x, y)];
+        return _tileInfo[CoordToIndex(x, y)];
     }
 
     //Returns array of existing infoTiles
@@ -210,7 +208,8 @@ public partial class TileGrid : TileMapLayer
                     GD.Print("Harvest!");
                     TileInfo curTile = GetPlantTile(tilePos.X, tilePos.Y);
                     //DayPassed -= curTile.TurnDay;
-                    curTile.Harvest();
+                    var newTile = curTile.Harvest();
+                    _tileInfo[CoordToIndex(tilePos.X, tilePos.Y)] = newTile;
                 }
                 break;
             case "Hoe":
@@ -246,7 +245,9 @@ public partial class TileGrid : TileMapLayer
                             DayPassedEventHandler dayPassed = null; //TODO: Look back at this. Is there a better way? Main issue is if we want to disconnect on demand.
                             dayPassed = (newDay) =>
                             {
-                                if (curTile.TurnDay(newDay))
+                                var (isMature, newTileInfo) = curTile.TurnDay(newDay);
+                                _tileInfo[CoordToIndex(tilePos.X, tilePos.Y)] = newTileInfo;
+                                if (isMature)
                                     DayPassed -= dayPassed;
                             };
                             DayPassed += dayPassed;
@@ -254,7 +255,7 @@ public partial class TileGrid : TileMapLayer
                         }
                     };
                     DayPassed += crossBreed;
-                    _tileInfo[coordToIndex(tilePos.X, tilePos.Y)] = curTile;
+                    _tileInfo[CoordToIndex(tilePos.X, tilePos.Y)] = curTile;
                 }
                 break;
         }
@@ -279,11 +280,13 @@ public partial class TileGrid : TileMapLayer
             DayPassedEventHandler dayPassed = null; //TODO: Look back at this. Is there a better way? Main issue is if we want to disconnect on demand.
             dayPassed = (day) =>
             {
-                if (curTile.TurnDay(day))
+                var (isMature, newTileInfo) = curTile.TurnDay(day);
+                _tileInfo[CoordToIndex(tilePos.X, tilePos.Y)] = newTileInfo;
+                if (isMature)
                     DayPassed -= dayPassed;
             };
             DayPassed += dayPassed;
-            _tileInfo[coordToIndex(tilePos.X, tilePos.Y)] = curTile;
+            _tileInfo[CoordToIndex(tilePos.X, tilePos.Y)] = curTile;
         }
     }
 }
