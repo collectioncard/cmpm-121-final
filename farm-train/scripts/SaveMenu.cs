@@ -38,7 +38,12 @@ public partial class SaveMenu : CanvasLayer
             {
                 menuPopup.Show();
             }
+            //Input.MouseMode = Input.MouseMode == Input.MouseModeEnum.Visible ? Input.MouseModeEnum.Confined: Input.MouseModeEnum.Visible;
         }
+        Input.MouseMode = menuPopup.Visible
+            ? Input.MouseModeEnum.Visible
+            : Input.MouseModeEnum.Confined;
+        GetTree().Paused = menuPopup.Visible;
     }
 
     private void OnSaveButtonPressed()

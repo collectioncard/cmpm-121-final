@@ -73,7 +73,7 @@ public partial class MouseInputManager : Node2D
             if (!TileCursor.Visible)
                 return;
             EmitSignal(SignalName.TileClick, GetGlobalMousePosition(), _tools[_selectedToolIndex]);
-            TurnPlayer();
+            Player.FlipH = (GetGlobalMousePosition().X < Player.Position.X);
         }
     }
 
@@ -100,7 +100,7 @@ public partial class MouseInputManager : Node2D
                     Player.Position
                 ) / Global.PlayerSpeed
             );
-            TurnPlayer();
+            Player.FlipH = (GetGlobalMousePosition().X < Player.Position.X);
         }
         // Change the selected tool
         else if (@event is InputEventMouseButton { Pressed: true } eventMouseButton)
@@ -120,21 +120,6 @@ public partial class MouseInputManager : Node2D
                 } while (_tools[_selectedToolIndex].IsDisabled);
             }
             GetNode<Sprite2D>("%ToolTexture").Texture = _tools[_selectedToolIndex]._texture;
-        }
-    }
-
-    public void TurnPlayer()
-    {
-        if (
-            (Global.GetTileAtPos(GetGlobalMousePosition()) + Global.SpriteOffset).X
-            < Player.Position.X
-        )
-        {
-            Player.FlipH = true;
-        }
-        else
-        {
-            Player.FlipH = false;
         }
     }
 }
