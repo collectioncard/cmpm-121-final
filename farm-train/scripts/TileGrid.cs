@@ -7,16 +7,16 @@ using Godot.NativeInterop;
 public partial class TileGrid : TileMapLayer
 {
     //continuous thingy
-    public struct TileInfo
+    protected struct TileInfo
     {
         public Vector2I Position { get; set; }
-        public int SoilType { get; set; }
+        public int SoilType { get; set; } //!!
 
         public Sprite2D PlantSprite { get; set; }
 
-        public int PlantIndex { get; set; }
-        public float Moisture { get; set; }
-        public int GrowthStage { get; set; }
+        public int PlantIndex { get; set; } //!!
+        public float Moisture { get; set; } //!!
+        public int GrowthStage { get; set; } //!!
 
         public DayPassedEventHandler TurnDay;
 
@@ -119,18 +119,126 @@ public partial class TileGrid : TileMapLayer
         }
     }
 
+    protected class ContiguousTileInfo
+    {
+        /*
+        public int SoilType { get; set; } //!! -- 4 (idx + 0)
+        public int PlantIndex { get; set; } //!! -- 4 (idx + 4)
+        public float Moisture { get; set; } //!! -- 4 (idx + 8)
+        public int GrowthStage { get; set; } //!! -- 4 (idx + 12)
+        */
+        private static ContiguousTileInfo _instance = null;
+        public static ContiguousTileInfo CurState
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new ContiguousTileInfo();
+                }
+                return _instance;
+            }
+        }
+        private const int SizeOfTileInfo = 16;
+        private byte[] _state = new byte[
+            (Global.TileMapSize.X * Global.TileMapSize.Y) * SizeOfTileInfo
+        ];
+
+        public void UpdateProperty(TileInfo tileInfo, string property)
+        {
+            switch (property)
+            {
+                case "soiltype":
+                    int sIdx = CoordToIndex(tileInfo.Position);
+                    byte[] sVal = BitConverter.GetBytes(tileInfo.SoilType);
+                    _state[sIdx + 0] = sVal[0];
+                    _state[sIdx + 1] = sVal[1];
+                    _state[sIdx + 2] = sVal[2];
+                    _state[sIdx + 3] = sVal[3];
+                    break;
+                case "plantindex":
+                    int pIdx = CoordToIndex(tileInfo.Position);
+                    byte[] pVal = BitConverter.GetBytes(tileInfo.PlantIndex);
+                    _state[pIdx + 4] = pVal[0];
+                    _state[pIdx + 5] = pVal[1];
+                    _state[pIdx + 6] = pVal[2];
+                    _state[pIdx + 7] = pVal[3];
+                    break;
+                case "moisture":
+                    int mIdx = CoordToIndex(tileInfo.Position);
+                    byte[] mVal = BitConverter.GetBytes(tileInfo.Moisture);
+                    _state[mIdx + 8] = mVal[0];
+                    _state[mIdx + 9] = mVal[1];
+                    _state[mIdx + 10] = mVal[2];
+                    _state[mIdx + 11] = mVal[3];
+                    break;
+                case "growthstage":
+                    int gIdx = CoordToIndex(tileInfo.Position);
+                    byte[] gVal = BitConverter.GetBytes(tileInfo.GrowthStage);
+                    _state[gIdx + 12] = gVal[0];
+                    _state[gIdx + 13] = gVal[1];
+                    _state[gIdx + 14] = gVal[2];
+                    _state[gIdx + 15] = gVal[3];
+                    break;
+            }
+        }
+
+        public void SaveTileInfo(TileInfo tileInfo)
+        {
+            UpdateProperty(tileInfo, "soiltype");
+            UpdateProperty(tileInfo, "plantindex");
+            UpdateProperty(tileInfo, "moisture");
+            UpdateProperty(tileInfo, "growthstage");
+        }
+
+        public TileInfo GetTileInfo(Vector2I position)
+        {
+            return new TileInfo
+            {
+                Position = position,
+                SoilType = BitConverter.ToInt32(_state, CoordToIndex(position)),
+                PlantIndex = BitConverter.ToInt32(_state, CoordToIndex(position) + 4),
+                Moisture = BitConverter.ToSingle(_state, CoordToIndex(position) + 8),
+                GrowthStage = BitConverter.ToInt32(_state, CoordToIndex(position) + 12),
+            };
+        }
+    }
+
     private TileInfo[] _tileInfo = new TileInfo[Global.TileMapSize.X * Global.TileMapSize.Y];
 
     private int _day;
     private BetterTerrain _bt;
 
-    private int CoordToIndex(int x, int y)
+    protected static int CoordToIndex(Vector2I coord)
+    {
+        return coord.X + coord.Y * Global.TileMapSize.X;
+    }
+
+    protected static int CoordToIndex(int x, int y)
     {
         return x + y * Global.TileMapSize.X;
     }
 
     [Signal]
     public delegate void DayPassedEventHandler(int prevDay);
+
+    private DayPassedEventHandler CreateDayPassHandler(Vector2I pos)
+    {
+        return (day) =>
+        {
+            if (
+                _tileInfo[CoordToIndex(pos)]
+                    .GetPlantType()
+                    .GrowthCheck(
+                        _tileInfo[CoordToIndex(pos)].CalcSun(day),
+                        _tileInfo[CoordToIndex(pos)].CalcMoisture(day)
+                    )
+            )
+            {
+                _tileInfo[CoordToIndex(pos)].Grow();
+            }
+        };
+    }
 
     [Signal]
     public delegate void UnlockEventHandler(int id);
@@ -185,7 +293,9 @@ public partial class TileGrid : TileMapLayer
 
     public override void _Ready()
     {
+        ContiguousTileInfo.CurState.SaveTileInfo(new TileInfo());
         _bt = new BetterTerrain(this);
+        GD.Print("hre");
     }
 
     public void TileClick(Vector2 pos, Tool tool)
@@ -204,7 +314,6 @@ public partial class TileGrid : TileMapLayer
                     ref TileInfo curTile = ref GetPlantTile(tilePos.X, tilePos.Y);
                     curTile.Harvest();
                     DayPassed -= curTile.TurnDay;
-                    //_tileInfo[CoordToIndex(tilePos.X, tilePos.Y)] = newTile;
                 }
                 break;
             case "Hoe":
@@ -244,13 +353,12 @@ public partial class TileGrid : TileMapLayer
                                 GetPlantTile(tilePos.X, tilePos.Y).GetPlantType().GetTypeName()
                             );
                             _tileInfo[CoordToIndex(tilePos.X, tilePos.Y)].TurnDay =
-                                CreateDayPassHandler(_tileInfo[CoordToIndex(tilePos.X, tilePos.Y)]);
+                                CreateDayPassHandler(tilePos);
                             DayPassed += _tileInfo[CoordToIndex(tilePos.X, tilePos.Y)].TurnDay;
                             DayPassed -= crossBreed;
                         }
                     };
                     DayPassed += crossBreed;
-                    //_tileInfo[CoordToIndex(tilePos.X, tilePos.Y)] = curTile;
                 }
                 break;
         }
@@ -273,34 +381,8 @@ public partial class TileGrid : TileMapLayer
             ref TileInfo curTile = ref GetPlantTile(tilePos.X, tilePos.Y);
             curTile.SowPlant(Global._plants[plantIndex]);
 
-            curTile.TurnDay = CreateDayPassHandler(curTile);
+            curTile.TurnDay = CreateDayPassHandler(curTile.Position);
             DayPassed += curTile.TurnDay;
         }
-    }
-
-    private DayPassedEventHandler CreateDayPassHandler(TileInfo tileInfo)
-    {
-        return (day) =>
-        {
-            GD.Print("Day: " + day);
-            GD.Print(
-                _tileInfo[CoordToIndex(tileInfo.Position.X, tileInfo.Position.Y)]
-                    .GetPlantType()
-                    .GetTypeName()
-            );
-            if (
-                _tileInfo[CoordToIndex(tileInfo.Position.X, tileInfo.Position.Y)]
-                    .GetPlantType()
-                    .GrowthCheck(
-                        _tileInfo[CoordToIndex(tileInfo.Position.X, tileInfo.Position.Y)]
-                            .CalcSun(day),
-                        _tileInfo[CoordToIndex(tileInfo.Position.X, tileInfo.Position.Y)]
-                            .CalcMoisture(day)
-                    )
-            )
-            {
-                _tileInfo[CoordToIndex(tileInfo.Position.X, tileInfo.Position.Y)].Grow();
-            }
-        };
     }
 }
