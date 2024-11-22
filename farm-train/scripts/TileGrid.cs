@@ -6,13 +6,135 @@ using Godot.NativeInterop;
 
 public partial class TileGrid : TileMapLayer
 {
-    private int _day;
-    private Plant[] _plants = new Plant[Global.PlantTypes]; //TODO: Look into Godot arrays/collections
-    private BetterTerrain _bt;
-    private readonly PlantTile[,] _plantGrid = new PlantTile[
-        Global.TileMapSize.X,
-        Global.TileMapSize.Y
+    //continuous thingy
+    public struct TileInfo
+    {
+        public Vector2I Position { get; set; }
+        public int SoilType { get; set; }
+
+        public Sprite2D PlantSprite { get; set; }
+
+        public int PlantIndex { get; set; }
+        public float Moisture { get; set; }
+        public int GrowthStage { get; set; }
+
+        public Plant GetPlantType()
+        {
+            return PlantIndex == -1 ? null : Global._plants[PlantIndex];
+        }
+
+        public bool IsMature()
+        {
+            return PlantIndex != -1 && GrowthStage == GetPlantType().GrowthStages;
+        }
+
+        #region Daily Conditions
+        private void Grow()
+        {
+            if (IsMature())
+                return;
+            //TODO: Make growth reduce moisture?
+            GrowthStage++;
+            PlantSprite.Texture = GD.Load<Texture2D>(GetPlantType().TexturePaths[GrowthStage - 1]);
+        }
+
+        public bool TurnDay(int day)
+        {
+            if (GetPlantType().GrowthCheck(CalcSun(day), CalcMoisture(day)))
+            {
+                Grow();
+            }
+            _tileInfo[Position.X + Position.Y * Global.TileMapSize.X] = this;
+            return IsMature();
+        }
+
+        //Idea get sun and moisture by using pos x, y, day, plant type, soil type, and run seed as seed, so it is "random" but deterministic, instead of randomly doing it and loading for each tile.
+        private string DaySeedString(int day) //standardize method for seeding
+        {
+            return $"{Global.Seed}{day}{SoilType}{Position.X}{Position.Y}";
+        }
+
+        private float RandomLevel(int day)
+        {
+            double result = new Random(GD.Hash(DaySeedString(day))).NextDouble();
+            return (float)result;
+        }
+
+        private float CalcMoisture(int day)
+        {
+            //TODO: Soil types determine possible moisture vals
+            Moisture += RandomLevel(day) * SoilType * .3f;
+            return Moisture;
+        }
+
+        private float CalcSun(int day)
+        {
+            return RandomLevel(day);
+        }
+        #endregion
+
+        //Performs clone or crossbreed event based on neighbors
+        public bool Propagate(int day, TileInfo[] neighbors)
+        {
+            GD.Print("Propagate attempt!");
+            if (RandomLevel(day) < .5f) //only do a propagation attempt 50% of the time
+                return false;
+            TileInfo[] validNeighbors = neighbors.Where(tile => tile.IsMature()).ToArray(); //out of the non-null neighbors only mature are valid
+            switch (validNeighbors.Length)
+            {
+                //no valid = end attempt
+                case 0:
+                    return false;
+                //only 1 valid causes a cloning event
+                case 1:
+                    SowPlant(validNeighbors[0].GetPlantType());
+                    break;
+                //>= 2 causes a random pair of parents and offspring to be picked
+                case > 1:
+                    validNeighbors = validNeighbors.OrderBy(e => Global.Rng.Randf()).ToArray();
+                    SowPlant(
+                        Plant.ChooseOffspring(
+                            validNeighbors[0].GetPlantType(),
+                            validNeighbors[1].GetPlantType()
+                        )
+                    );
+                    break;
+            }
+            return true;
+        }
+
+        public void SowPlant(Plant plantType)
+        {
+            PlantIndex = plantType.GetTypeName();
+            GrowthStage = 1;
+            PlantSprite.Texture = GD.Load<Texture2D>(plantType.TexturePaths[GrowthStage - 1]);
+            PlantSprite.Position =
+                new Vector2(Position.X * Global.TileWidth, Position.Y * Global.TileHeight)
+                + Global.SpriteOffset;
+        }
+
+        public void Harvest()
+        {
+            // Logic to remove plant here
+            PlantIndex = -1;
+            GrowthStage = -1;
+            PlantSprite.Texture = null;
+            //TODO: Tie into tool/inven system, return items? event listener?
+            _tileInfo[Position.X + Position.Y * Global.TileMapSize.X] = this;
+        }
+    }
+
+    public static TileInfo?[] _tileInfo = new TileInfo?[
+        Global.TileMapSize.X * Global.TileMapSize.Y
     ];
+
+    private int _day;
+    private BetterTerrain _bt;
+
+    private int coordToIndex(int x, int y)
+    {
+        return x + y * Global.TileMapSize.X;
+    }
 
     [Signal]
     public delegate void DayPassedEventHandler(int prevDay);
@@ -21,65 +143,56 @@ public partial class TileGrid : TileMapLayer
     public delegate void UnlockEventHandler(int id);
 
     //Creates a plantTile, adds to tree and inits
-    private PlantTile AddPlantTile(int x, int y)
+    private TileInfo AddTile(int x, int y)
     {
-        _plantGrid[x, y] = new PlantTile();
-        AddChild(_plantGrid[x, y]);
-        _plantGrid[x, y].Init(x, y, _bt.GetCell(new Vector2I(x, y)));
-        return _plantGrid[x, y];
+        int idx = coordToIndex(x, y);
+        var temp = new Sprite2D();
+        AddChild(temp);
+
+        var result = new TileInfo
+        {
+            Position = new Vector2I(x, y),
+            PlantIndex = -1,
+            SoilType = _bt.GetCell(new Vector2I(x, y)),
+            PlantSprite = temp,
+        };
+
+        _tileInfo[idx] = result;
+
+        return result;
     }
 
     //Either returns the existing plantTile or returns a new one at x,y
-    private PlantTile GetPlantTile(int x, int y)
+    private TileInfo GetPlantTile(int x, int y)
     {
-        return _plantGrid[x, y] ?? AddPlantTile(x, y);
+        return _tileInfo[coordToIndex(x, y)] ?? AddTile(x, y);
     }
 
     //Returns plantTile it exists else returns null
-    private PlantTile QueryPlantTile(int x, int y)
+    private TileInfo? QueryTileInfo(int x, int y)
     {
         if (x < 0 || x >= Global.TileMapSize.X || y < 0 || y >= Global.TileMapSize.Y)
             return null;
-        return _plantGrid[x, y];
+        return _tileInfo[coordToIndex(x, y)];
     }
 
-    //Returns array of existing plantTiles or null
-    private PlantTile[] QueryNeighborTiles(int x, int y)
+    //Returns array of existing infoTiles
+    private TileInfo[] QueryNeighborTiles(int x, int y)
     {
-        PlantTile[] result =
+        TileInfo?[] result =
         {
-            QueryPlantTile(x - 1, y),
-            QueryPlantTile(x, y - 1),
-            QueryPlantTile(x + 1, y),
-            QueryPlantTile(x, y + 1),
+            QueryTileInfo(x - 1, y),
+            QueryTileInfo(x, y - 1),
+            QueryTileInfo(x + 1, y),
+            QueryTileInfo(x, y + 1),
         };
-        return result.Where(tile => tile != null).ToArray();
+
+        return result.Where(tile => tile.HasValue).Select(tile => tile.Value).ToArray();
     }
 
     public override void _Ready()
     {
         _bt = new BetterTerrain(this);
-
-        /* TODO: Rework Later
-         Define plants ?elsewhere? then read and generate plant classes*/
-        _plants[0] = Plant.CROSSBREED;
-        _plants[1] = new Plant();
-        string[] plant1Textures =
-        {
-            "res://assets/plants/plant1-1.png",
-            "res://assets/plants/plant1-2.png",
-            "res://assets/plants/plant1-3.png",
-        };
-        _plants[1].Init(1, plant1Textures, 1, 3);
-        _plants[2] = new Plant();
-        string[] plant2Textures =
-        {
-            "res://assets/plants/plant2-1.png",
-            "res://assets/plants/plant2-2.png",
-            "res://assets/plants/plant2-3.png",
-        };
-        _plants[2].Init(2, plant2Textures, 1, 3);
-        _plants[1].AddOffspring(_plants[2]);
     }
 
     public void TileClick(Vector2 pos, Tool tool)
@@ -90,18 +203,20 @@ public partial class TileGrid : TileMapLayer
         {
             case "Open_Hand":
                 if (
-                    QueryPlantTile(tilePos.X, tilePos.Y) != null
-                    && QueryPlantTile(tilePos.X, tilePos.Y).CanBeHarvested()
+                    QueryTileInfo(tilePos.X, tilePos.Y).HasValue
+                    && QueryTileInfo(tilePos.X, tilePos.Y)?.IsMature() == true
                 )
                 {
-                    DayPassed -= _plantGrid[tilePos.X, tilePos.Y].TurnDay;
-                    _plantGrid[tilePos.X, tilePos.Y].Harvest();
+                    GD.Print("Harvest!");
+                    TileInfo curTile = GetPlantTile(tilePos.X, tilePos.Y);
+                    //DayPassed -= curTile.TurnDay;
+                    curTile.Harvest();
                 }
                 break;
             case "Hoe":
                 if (_bt.GetCell(tilePos) != 5)
                 {
-                    AddPlantTile(tilePos.X, tilePos.Y);
+                    AddTile(tilePos.X, tilePos.Y);
                     _bt.SetCell(tilePos, 5);
                     _bt.UpdateTerrainCell(tilePos);
                 }
@@ -119,24 +234,27 @@ public partial class TileGrid : TileMapLayer
                     && GetPlantTile(tilePos.X, tilePos.Y).GetPlantType() == null
                 )
                 {
-                    _plantGrid[tilePos.X, tilePos.Y].SowPlant(Plant.CROSSBREED);
+                    GD.Print("PLacing crossbreed");
+                    TileInfo curTile = GetPlantTile(tilePos.X, tilePos.Y);
+                    curTile.SowPlant(Plant.CROSSBREED);
                     DayPassedEventHandler crossBreed = null; //TODO: Look back at this. Is there a better way? Main issue is if we want to disconnect on demand.
                     crossBreed = (day) =>
                     {
-                        if (
-                            _plantGrid[tilePos.X, tilePos.Y]
-                                .Propagate(day, QueryNeighborTiles(tilePos.X, tilePos.Y))
-                        )
+                        if (curTile.Propagate(day, QueryNeighborTiles(tilePos.X, tilePos.Y)))
                         {
-                            EmitSignal(
-                                SignalName.Unlock,
-                                _plantGrid[tilePos.X, tilePos.Y].GetPlantType().GetTypeName()
-                            );
-                            DayPassed += _plantGrid[tilePos.X, tilePos.Y].TurnDay;
+                            EmitSignal(SignalName.Unlock, curTile.GetPlantType().GetTypeName());
+                            DayPassedEventHandler dayPassed = null; //TODO: Look back at this. Is there a better way? Main issue is if we want to disconnect on demand.
+                            dayPassed = (newDay) =>
+                            {
+                                if (curTile.TurnDay(newDay))
+                                    DayPassed -= dayPassed;
+                            };
+                            DayPassed += dayPassed;
                             DayPassed -= crossBreed;
                         }
                     };
                     DayPassed += crossBreed;
+                    _tileInfo[coordToIndex(tilePos.X, tilePos.Y)] = curTile;
                 }
                 break;
         }
@@ -154,141 +272,18 @@ public partial class TileGrid : TileMapLayer
 
     private void PlantSeed(Vector2I tilePos, int plantIndex)
     {
-        if (
-            QueryPlantTile(tilePos.X, tilePos.Y) == null
-            || QueryPlantTile(tilePos.X, tilePos.Y).GetPlantType() != null
-        )
-            return;
-        _plantGrid[tilePos.X, tilePos.Y].SowPlant(_plants[plantIndex]);
-        DayPassed += _plantGrid[tilePos.X, tilePos.Y].TurnDay;
-    }
-
-    private partial class PlantTile : Sprite2D
-    {
-        private int _soilType;
-        private Plant _plantType;
-        private Vector2I _tilePos;
-        private int _growthStage = -1;
-        private float _moistureLevel;
-
-        public void Init(int x, int y, int soilType)
+        if (_bt.GetCell(tilePos) == 5 && GetPlantTile(tilePos.X, tilePos.Y).GetPlantType() == null)
         {
-            _soilType = soilType;
-            _tilePos = new Vector2I(x, y);
-            _moistureLevel = 0;
-            _growthStage = -1;
-        }
-
-        public int GetGrowthStage()
-        {
-            return _growthStage;
-        }
-
-        public Plant GetPlantType()
-        {
-            return _plantType;
-        }
-
-        public bool IsMature()
-        {
-            return _plantType != null && _growthStage == _plantType.GrowthStages;
-        }
-
-        #region Daily Conditions
-        private void Grow()
-        {
-            if (_growthStage >= _plantType.GrowthStages)
-                return;
-            //TODO: Make growth reduce moisture?
-            _growthStage++;
-            Texture = GD.Load<Texture2D>(_plantType.TexturePaths[_growthStage - 1]);
-        }
-
-        public void TurnDay(int day)
-        {
-            if (_plantType.GrowthCheck(CalcSun(day), CalcMoisture(day)))
+            TileInfo curTile = GetPlantTile(tilePos.X, tilePos.Y);
+            curTile.SowPlant(Global._plants[plantIndex]);
+            DayPassedEventHandler dayPassed = null; //TODO: Look back at this. Is there a better way? Main issue is if we want to disconnect on demand.
+            dayPassed = (day) =>
             {
-                Grow();
-            }
-        }
-
-        //Idea get sun and moisture by using pos x, y, day, plant type, soil type, and run seed as seed, so it is "random" but deterministic, instead of randomly doing it and loading for each tile.
-        private string DaySeedString(int day) //standardize method for seeding
-        {
-            return $"{Global.Seed}{day}{_soilType}{_tilePos.X}{_tilePos.Y}";
-        }
-
-        private float RandomLevel(int day)
-        {
-            double result = new Random(GD.Hash(DaySeedString(day))).NextDouble();
-            return (float)result;
-        }
-
-        private float CalcMoisture(int day)
-        {
-            //TODO: Soil types determine possible moisture vals
-            _moistureLevel += RandomLevel(day) * _soilType * .3f;
-            return _moistureLevel;
-        }
-
-        private float CalcSun(int day)
-        {
-            return RandomLevel(day);
-        }
-        #endregion
-
-        //Performs clone or crossbreed event based on neighbors
-        public bool Propagate(int day, PlantTile[] neighbors)
-        {
-            if (RandomLevel(day) < .5f) //only do a propagation attempt 50% of the time
-                return false;
-            PlantTile[] validNeighbors = neighbors.Where(tile => tile.IsMature()).ToArray(); //out of the non-null neighbors only mature are valid
-            switch (validNeighbors.Length)
-            {
-                //no valid = end attempt
-                case 0:
-                    return false;
-                //only 1 valid causes a cloning event
-                case 1:
-                    SowPlant(validNeighbors[0]._plantType);
-                    break;
-                //>= 2 causes a random pair of parents and offspring to be picked
-                case > 1:
-                    validNeighbors = validNeighbors.OrderBy(e => Global.Rng.Randf()).ToArray();
-                    SowPlant(
-                        Plant.ChooseOffspring(
-                            validNeighbors[0]._plantType,
-                            validNeighbors[1]._plantType
-                        )
-                    );
-                    break;
-            }
-            return true;
-        }
-
-        public void SowPlant(Plant plantType)
-        {
-            _plantType = plantType;
-            _growthStage = 1;
-            Texture = GD.Load<Texture2D>(plantType.TexturePaths[_growthStage - 1]);
-            Position =
-                new Vector2(_tilePos.X * Global.TileWidth, _tilePos.Y * Global.TileHeight)
-                + Global.SpriteOffset;
-        }
-
-        public void Harvest()
-        {
-            // Logic to remove plant here
-            _plantType = null;
-            _growthStage = -1;
-            Texture = null;
-            //TODO: Tie into tool/inven system, return items? event listener?
-        }
-
-        public bool CanBeHarvested()
-        {
-            // Logic to determine if a plant can be harvested here
-            return _plantType != null && _growthStage == _plantType.GrowthStages;
+                if (curTile.TurnDay(day))
+                    DayPassed -= dayPassed;
+            };
+            DayPassed += dayPassed;
+            _tileInfo[coordToIndex(tilePos.X, tilePos.Y)] = curTile;
         }
     }
 }
