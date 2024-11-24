@@ -9,13 +9,34 @@ namespace FarmTrain.classes;
 /// A snapshot of the properties of a tile. Any modifications made to this struct *WILL NOT* be reflected in the game state.
 /// To submit your changes, call <see cref="TileDataManager.SetPropertyValueAtCoord"/> with the modified data.
 /// </summary>
-public struct TileInfo
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public readonly struct TileInfo
 {
-    public Vector2I TilePosition;
-    private int SoilType { get; set; }
-    private int PlantType { get; set; }
-    private int MoistureLevel { get; set; }
-    private int GrowthStage { get; set; }
+    public int SoilType { get; }
+    public int PlantType { get; }
+    public int MoistureLevel { get; }
+    public int GrowthStage { get; }
+    public int CoordX { get; }
+    public int CoordY { get; }
+
+    public TileInfo(
+        int soilType,
+        int plantType,
+        int moistureLevel,
+        int growthStage,
+        int coordX,
+        int coordY
+    )
+    {
+        SoilType = soilType;
+        PlantType = plantType;
+        MoistureLevel = moistureLevel;
+        GrowthStage = growthStage;
+        CoordX = coordX;
+        CoordY = coordY;
+    }
+
+    public Vector2I GetCoordinates() => new Vector2I(CoordX, CoordY);
 }
 
 /// <summary>
@@ -25,8 +46,11 @@ public struct TileInfo
 public class TileDataManager
 {
     // Apply the Singleton pattern to the class to prevent multiple game states from existing at the same time
-    private static TileDataManager _instance;
-    public static TileDataManager Instance => _instance ??= new TileDataManager();
+    private static readonly Lazy<TileDataManager> _instance = new Lazy<TileDataManager>(
+        () => new TileDataManager()
+    );
+
+    public static TileDataManager Instance => _instance.Value;
 
     private static int _tileInfoSize = DataSize * Enum.GetValues(typeof(Properties)).Length; // The size of each tile info block in bytes
 
@@ -38,6 +62,8 @@ public class TileDataManager
         PlantType = 1 * DataSize,
         MoistureLevel = 2 * DataSize,
         GrowthStage = 3 * DataSize,
+        CoordX = 4 * DataSize,
+        CoordY = 5 * DataSize,
     }
 
     // Size of the data to store
@@ -109,7 +135,7 @@ public class TileDataManager
     /// <param name="tileInfo"></param>
     public void SetTileInfoAtCoord(TileInfo tileInfo)
     {
-        int startIndex = CoordsToIndex(tileInfo.TilePosition) * _tileInfoSize;
+        int startIndex = CoordsToIndex(tileInfo.GetCoordinates()) * _tileInfoSize;
         var span = new Span<byte>(_tileDataStorage, startIndex, _tileInfoSize);
         MemoryMarshal.Write(span, ref tileInfo);
     }
