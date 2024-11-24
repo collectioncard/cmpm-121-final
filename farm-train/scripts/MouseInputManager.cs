@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using FarmTrain.classes;
+using FarmTrain.scripts;
 using Godot;
 
 public partial class MouseInputManager : Node2D
@@ -32,16 +33,22 @@ public partial class MouseInputManager : Node2D
         Player.Play();
     }
 
+    public void ConnectToGrid()
+    {
+        TileClick += StateManager.CurTileGrid.TileClick;
+        StateManager.CurTileGrid.Unlock += Unlock;
+    }
+
     public override void _Ready()
     {
-        TileClick += GetNode<TileGrid>("TileGrid").TileClick;
-        GetNode<TileGrid>("TileGrid").Unlock += Unlock;
+        StateManager.CurTileGrid = GetNode<TileGrid>("TileGrid");
+        ConnectToGrid();
         _make_TileCursor();
         _make_Player();
         _initializeTools();
     }
 
-    private void Unlock(int id)
+    public void Unlock(int id)
     {
         GD.Print("Unlock: " + id);
         switch (id)
@@ -82,7 +89,7 @@ public partial class MouseInputManager : Node2D
         if (@event is InputEventMouseMotion eventMouseMotion)
         {
             TileCursor.Position =
-                Global.GetTileAtPos(eventMouseMotion.Position) + Global.SpriteOffset;
+                Utils.GetTileAtPos(eventMouseMotion.Position) + Global.SpriteOffset;
             TileCursor.Visible =
                 TileCursor.Position.DistanceTo(Player.Position) < Global.InteractionRadius;
         }
@@ -94,29 +101,27 @@ public partial class MouseInputManager : Node2D
             _playerPositionTween.TweenProperty(
                 Player,
                 "position",
-                (Global.GetTileAtPos(GetGlobalMousePosition()) + Global.SpriteOffset),
-                (Global.GetTileAtPos(GetGlobalMousePosition()) + Global.SpriteOffset).DistanceTo(
+                (Utils.GetTileAtPos(GetGlobalMousePosition()) + Global.SpriteOffset),
+                (Utils.GetTileAtPos(GetGlobalMousePosition()) + Global.SpriteOffset).DistanceTo(
                     Player.Position
                 ) / Global.PlayerSpeed
             );
         }
         // Change the selected tool
-        else if (@event is InputEventMouseButton { Pressed: true } eventMouseButton)
+        else if (@event.IsActionPressed("toolup"))
         {
-            if (eventMouseButton.ButtonIndex == MouseButton.WheelUp)
+            do
             {
-                do
-                {
-                    _selectedToolIndex = (_selectedToolIndex + 1) % _tools.Count;
-                } while (_tools[_selectedToolIndex].IsDisabled);
-            }
-            else if (eventMouseButton.ButtonIndex == MouseButton.WheelDown)
+                _selectedToolIndex = (_selectedToolIndex + 1) % _tools.Count;
+            } while (_tools[_selectedToolIndex].IsDisabled);
+            GetNode<Sprite2D>("%ToolTexture").Texture = _tools[_selectedToolIndex]._texture;
+        }
+        else if (@event.IsActionPressed("tooldown"))
+        {
+            do
             {
-                do
-                {
-                    _selectedToolIndex = (_selectedToolIndex - 1 + _tools.Count) % _tools.Count;
-                } while (_tools[_selectedToolIndex].IsDisabled);
-            }
+                _selectedToolIndex = (_selectedToolIndex - 1 + _tools.Count) % _tools.Count;
+            } while (_tools[_selectedToolIndex].IsDisabled);
             GetNode<Sprite2D>("%ToolTexture").Texture = _tools[_selectedToolIndex]._texture;
         }
     }

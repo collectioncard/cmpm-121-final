@@ -13,8 +13,8 @@ public partial class Plant : Resource
     public int GrowthStages;
     public string[] TexturePaths;
 
-    private float _sunNeeded = .5f;
-    private float _moistureNeeded = .5f;
+    private int _sunNeeded = 50;
+    private int _moistureNeeded = 50;
     private int _numPlantsNeeded;
 
     public static readonly Plant CROSSBREED = new Plant().Init(
@@ -63,7 +63,7 @@ public partial class Plant : Resource
         return validOffspring[rIndex];
     }
 
-    public bool GrowthCheck(float sun, float moisture)
+    public bool GrowthCheck(int sun, int moisture)
     {
         bool checkSunLevels = false;
         bool checkMoistureLevels = false;

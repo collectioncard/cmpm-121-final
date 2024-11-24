@@ -13,7 +13,7 @@ namespace FarmTrain.classes;
 public readonly struct TileInfo
 {
     public int SoilType { get; }
-    public int PlantType { get; }
+    public int PlantId { get; }
     public int MoistureLevel { get; }
     public int GrowthStage { get; }
     public int CoordX { get; }
@@ -21,7 +21,7 @@ public readonly struct TileInfo
 
     public TileInfo(
         int soilType,
-        int plantType,
+        int plantId,
         int moistureLevel,
         int growthStage,
         int coordX,
@@ -29,7 +29,7 @@ public readonly struct TileInfo
     )
     {
         SoilType = soilType;
-        PlantType = plantType;
+        PlantId = plantId;
         MoistureLevel = moistureLevel;
         GrowthStage = growthStage;
         CoordX = coordX;
@@ -59,7 +59,7 @@ public class TileDataManager
     public enum Properties
     {
         SoilType = 0 * DataSize,
-        PlantType = 1 * DataSize,
+        PlantId = 1 * DataSize,
         MoistureLevel = 2 * DataSize,
         GrowthStage = 3 * DataSize,
         CoordX = 4 * DataSize,
@@ -138,5 +138,32 @@ public class TileDataManager
         int startIndex = CoordsToIndex(tileInfo.GetCoordinates()) * _tileInfoSize;
         var span = new Span<byte>(_tileDataStorage, startIndex, _tileInfoSize);
         MemoryMarshal.Write(span, ref tileInfo);
+    }
+
+    /// <summary>
+    /// Returns a copy of the current state of _tileDataStorage.
+    /// </summary>
+    public byte[] ExportBytes()
+    {
+        return (byte[])_tileDataStorage.Clone();
+    }
+
+    /// <summary>
+    /// Clears the current storage of _tileDataStorage.
+    /// </summary>
+    public void Clear()
+    {
+        _tileDataStorage = new byte[Global.TileMapSize.X * Global.TileMapSize.Y * _tileInfoSize];
+    }
+
+    /// <summary>
+    /// Overwrites the current state of _tileDataStorage with the passed in byte[]
+    /// </summary>
+    public void OverwriteData(byte[] data)
+    {
+        if (data.Length == _tileDataStorage.Length)
+        {
+            _tileDataStorage = (byte[])data.Clone();
+        }
     }
 }

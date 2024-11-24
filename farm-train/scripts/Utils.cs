@@ -26,4 +26,11 @@ public static class Utils
             throw new ArgumentOutOfRangeException(nameof(idx), "Index is out of bounds.");
         return new Vector2I(idx % Global.TileMapSize.X, idx / Global.TileMapSize.X);
     }
+
+    public static Vector2 GetTileAtPos(Vector2 globalPos)
+    {
+        double x = Math.Floor((globalPos.X) / Global.TileWidth) * Global.TileWidth;
+        double y = Math.Floor((globalPos.Y) / Global.TileHeight) * Global.TileHeight;
+        return new Vector2((float)x, (float)y);
+    }
 }
