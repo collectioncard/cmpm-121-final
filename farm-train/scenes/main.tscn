@@ -51,6 +51,20 @@ position = Vector2(109, 14)
 position = Vector2(109, 14)
 texture = ExtResource("3_fn6l6")
 
+[node name="TileInfoBox" type="Panel" parent="UI"]
+offset_top = 53.0
+offset_right = 132.0
+offset_bottom = 133.0
+
+[node name="TileInfo" type="Label" parent="UI/TileInfoBox"]
+unique_name_in_owner = true
+offset_top = -1.0
+offset_right = 132.0
+offset_bottom = 82.0
+text = "Tile Info:
+Sun: 0%
+Moisture: 0%"
+
 [node name="Train" type="Sprite2D" parent="."]
 z_index = 1
 position = Vector2(8, 136)
