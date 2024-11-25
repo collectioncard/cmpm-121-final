@@ -97,17 +97,32 @@ public partial class MouseInputManager : Node2D
         // Move the player to the selected area
         else if (@event.IsActionPressed("action2"))
         {
-            _playerPositionTween?.Kill();
-            _playerPositionTween = Player.CreateTween();
-            _playerPositionTween.TweenProperty(
-                Player,
-                "position",
-                (Utils.GetTileAtPos(GetGlobalMousePosition()) + Global.SpriteOffset),
-                (Utils.GetTileAtPos(GetGlobalMousePosition()) + Global.SpriteOffset).DistanceTo(
-                    Player.Position
-                ) / Global.PlayerSpeed
-            );
-            Player.FlipH = (GetGlobalMousePosition().X < Player.Position.X);
+            _movePlayer(GetGlobalMousePosition());
+        }
+        // Move the player by WASD or Arrow
+        else if (@event.IsActionPressed("up"))
+        {
+            Vector2 newPosition = Player.Position + (Vector2.Up * Global.TileHeight);
+            ;
+            _movePlayer(newPosition);
+        }
+        else if (@event.IsActionPressed("left"))
+        {
+            Vector2 newPosition = Player.Position + (Vector2.Left * Global.TileWidth);
+            ;
+            _movePlayer(newPosition);
+        }
+        else if (@event.IsActionPressed("down"))
+        {
+            Vector2 newPosition = Player.Position + (Vector2.Down * Global.TileWidth);
+            ;
+            _movePlayer(newPosition);
+        }
+        else if (@event.IsActionPressed("right"))
+        {
+            Vector2 newPosition = Player.Position + (Vector2.Right * Global.TileWidth);
+            ;
+            _movePlayer(newPosition);
         }
         // Change the selected tool
         else if (@event.IsActionPressed("toolup"))
@@ -126,5 +141,19 @@ public partial class MouseInputManager : Node2D
             } while (_tools[_selectedToolIndex].IsDisabled);
             GetNode<Sprite2D>("%ToolTexture").Texture = _tools[_selectedToolIndex]._texture;
         }
+    }
+
+    private void _movePlayer(Vector2 newPosition)
+    {
+        _playerPositionTween?.Kill();
+        _playerPositionTween = Player.CreateTween();
+        _playerPositionTween.TweenProperty(
+            Player,
+            "position",
+            (Utils.GetTileAtPos(newPosition) + Global.SpriteOffset),
+            (Utils.GetTileAtPos(newPosition) + Global.SpriteOffset).DistanceTo(Player.Position)
+                / Global.PlayerSpeed
+        );
+        Player.FlipH = (GetGlobalMousePosition().X < Player.Position.X);
     }
 }
