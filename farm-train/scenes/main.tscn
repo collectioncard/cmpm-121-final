@@ -1,6 +1,7 @@
-[gd_scene load_steps=9 format=4 uid="uid://d14wjww6re8oi"]
+[gd_scene load_steps=10 format=4 uid="uid://d14wjww6re8oi"]
 
 [ext_resource type="Script" path="res://scripts/Camera.cs" id="1_6nw0d"]
+[ext_resource type="PackedScene" uid="uid://cakaeaw1gr5mb" path="res://scenes/saveMenu.tscn" id="2_rbwh6"]
 [ext_resource type="Script" path="res://scripts/MouseInputManager.cs" id="3_fgekt"]
 [ext_resource type="Texture2D" uid="uid://bakp2lilgrggi" path="res://assets/itemFrame.png" id="3_fn6l6"]
 [ext_resource type="Texture2D" uid="uid://doo1lgf4mu48q" path="res://assets/tiles.png" id="3_lqs3n"]
@@ -14,6 +15,8 @@ region = Rect2(48, 96, 16, 16)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("3_fgekt")
+
+[node name="MenuCanvas" parent="." instance=ExtResource("2_rbwh6")]
 
 [node name="Win" type="Label" parent="."]
 visible = false

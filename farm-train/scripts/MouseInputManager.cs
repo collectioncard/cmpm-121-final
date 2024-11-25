@@ -80,6 +80,7 @@ public partial class MouseInputManager : Node2D
             if (!TileCursor.Visible)
                 return;
             EmitSignal(SignalName.TileClick, GetGlobalMousePosition(), _tools[_selectedToolIndex]);
+            Player.FlipH = (GetGlobalMousePosition().X < Player.Position.X);
         }
     }
 
@@ -106,6 +107,7 @@ public partial class MouseInputManager : Node2D
                     Player.Position
                 ) / Global.PlayerSpeed
             );
+            Player.FlipH = (GetGlobalMousePosition().X < Player.Position.X);
         }
         // Change the selected tool
         else if (@event.IsActionPressed("toolup"))
