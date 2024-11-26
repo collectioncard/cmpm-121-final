@@ -10,7 +10,7 @@ const TILE_HEIGHT : int = 16;
 const SPRITE_OFFSET : Vector2 = Vector2(8, 8);
 const PLAYER_SPEED : int = 100;
 const INTERACTION_RADIUS : float = 4 * TILE_HEIGHT;
-const TILE_MAP_SIZE : Vector2 = Vector2(40, 23);
+const TILE_MAP_SIZE : Vector2i = Vector2i(40, 23);
 
 func _ready() -> void:
 	Seed = 1;
