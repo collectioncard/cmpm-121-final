@@ -1,11 +1,11 @@
-class_name Utils #imagine a world where there are namespaces
+extends Node
 
 static func index_from_vec(tilePos : Vector2i) -> int:
 	if (
 			tilePos.x < 0
 			|| tilePos.y < 0
-			|| tilePos.x >= Global.TileMapSize.x
-			|| tilePos.y >= Global.TileMapSize.y
+			|| tilePos.x >= Global.TILE_MAP_SIZE.x
+			|| tilePos.y >= Global.TILE_MAP_SIZE.y
 		):
 			push_error("Invalid tilepos OOB");
 	return tilePos.x + (tilePos.y * Global.TILE_MAP_SIZE.x);
