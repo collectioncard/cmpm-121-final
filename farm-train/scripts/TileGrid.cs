@@ -38,9 +38,24 @@ public partial class TileGrid : TileMapLayer
 
     private void Grow(int day, TileInfo tileInfo)
     {
+        TileInfo[] neighbors =
+        {
+            PlantDataManager.GetTileInfoAtCoord(tileInfo.GetCoordinates() + Vector2I.Left),
+            PlantDataManager.GetTileInfoAtCoord(tileInfo.GetCoordinates() + Vector2I.Right),
+            PlantDataManager.GetTileInfoAtCoord(tileInfo.GetCoordinates() + Vector2I.Up),
+            PlantDataManager.GetTileInfoAtCoord(tileInfo.GetCoordinates() + Vector2I.Down),
+        };
         if (IsMature(tileInfo))
             return;
-        if (!GetPlantType(tileInfo).GrowthCheck(CalcSun(tileInfo), CalcMoisture(tileInfo)))
+        if (
+            !GetPlantType(tileInfo)
+                .GrowthCheck(
+                    CalcSun(tileInfo),
+                    CalcMoisture(tileInfo),
+                    tileInfo.SoilType,
+                    neighbors
+                )
+        )
             return;
 
         GD.Print("Grow");
