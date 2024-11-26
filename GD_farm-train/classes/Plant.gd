@@ -34,9 +34,9 @@ func add_offspring(newOffspring : Plant) -> void:
 func choose_offspring(parentA : Plant, parentB : Plant) -> Plant:
 	var validOffspring : Array[Plant];
 	#TODO: Not O(n^2) solution
-	for offspring in parentA.offspring:
-		if (parentB.offspring.has(offspring)):
-			validOffspring.push_back(offspring);
+	for _offspring in parentA.offspring:
+		if (parentB.offspring.has(_offspring)):
+			validOffspring.push_back(_offspring);
 	if (validOffspring.is_empty()):
 		return parentA;
 	var rIndex : int = Global.rng.randi_range(0, validOffspring.size() - 1);

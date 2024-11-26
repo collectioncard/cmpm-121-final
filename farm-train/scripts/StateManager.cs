@@ -8,7 +8,7 @@ public partial class StateManager : Node
     private const string AutoSavePath = "/autoSave.tres";
     private static SaveFile _autoSave;
     private static SaveFile _currentSave;
-    private const string SlotPath = "/Save"; //save + slotnum + .tres
+    private const string SlotPath = "/Save"; //Save + slotnum + .tres
 
     public static TileGrid CurTileGrid = null;
 

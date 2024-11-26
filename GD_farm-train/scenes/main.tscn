@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=4 uid="uid://d14wjww6re8oi"]
+[gd_scene load_steps=7 format=4 uid="uid://d14wjww6re8oi"]
 
 [ext_resource type="PackedScene" uid="uid://cakaeaw1gr5mb" path="res://scenes/saveMenu.tscn" id="2_rbwh6"]
+[ext_resource type="Script" path="res://scripts/Win.gd" id="2_tdk3b"]
 [ext_resource type="Texture2D" uid="uid://bakp2lilgrggi" path="res://assets/itemFrame.png" id="3_fn6l6"]
 [ext_resource type="Texture2D" uid="uid://doo1lgf4mu48q" path="res://assets/tiles.png" id="3_lqs3n"]
 [ext_resource type="TileSet" uid="uid://c5fe35qjrbfls" path="res://scenes/tilesets/mainTileset.tres" id="6_qq7f8"]
@@ -21,6 +22,7 @@ offset_top = 3.0
 offset_right = 638.0
 offset_bottom = 26.0
 text = "You are win!"
+script = ExtResource("2_tdk3b")
 
 [node name="UI" type="CanvasLayer" parent="."]
 

@@ -7,5 +7,5 @@ func playerWin() -> void:
 func _process(_delta: float) -> void:
 	timer += _delta;
 	if (timer >= .1):
-		create_tween().tween_property(self, "modulate", Color.from_hsv(Global.rng.Randf(), 1, 1), 0.1);
+		create_tween().tween_property(self, "modulate", Color.from_hsv(Global.rng.randf(), 1, 1), 0.1);
 		timer = 0;
