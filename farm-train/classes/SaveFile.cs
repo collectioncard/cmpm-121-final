@@ -22,6 +22,10 @@ public partial class SaveFile : Resource
 
     public GameState CurrentState()
     {
+        if (_undoStack.Count == 0)
+        {
+            return new GameState();
+        }
         return _undoStack.Last();
     }
 
@@ -45,9 +49,9 @@ public partial class SaveFile : Resource
         return temp;
     }
 
-    public void Overwrite(SaveFile writeFrom)
+    public void OverwriteWith(SaveFile writeFrom)
     {
-        _undoStack = writeFrom._undoStack;
-        _redoStack = writeFrom._redoStack;
+        _undoStack = writeFrom._undoStack.Duplicate();
+        _redoStack = writeFrom._redoStack.Duplicate();
     }
 }

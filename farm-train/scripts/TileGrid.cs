@@ -62,6 +62,7 @@ public partial class TileGrid : TileMapLayer
         return $"{Global.Seed}{_day}{tileInfo.SoilType}{tileInfo.CoordX}{tileInfo.CoordY}";
     }
 
+    //Returns int between 0 and 100
     private int RandomLevel(TileInfo tileInfo)
     {
         double result = new Random(GD.Hash(DaySeedString(tileInfo))).NextDouble();
@@ -211,7 +212,7 @@ public partial class TileGrid : TileMapLayer
             EmitSignal(SignalName.Unlock, queueUnlock);
         }
         _day++;
-        StateManager.SaveState(PlantDataManager.ExportBytes(), _day);
+        StateManager.AutoSave(PlantDataManager.ExportBytes(), _day);
     }
 
     [Signal]
@@ -257,7 +258,7 @@ public partial class TileGrid : TileMapLayer
                     GD.Print("Harvest!");
                     TileInfo curTile = GetPlantTile(tilePos.X, tilePos.Y);
                     Harvest(curTile);
-                    StateManager.SaveState(PlantDataManager.ExportBytes(), _day);
+                    StateManager.AutoSave(PlantDataManager.ExportBytes(), _day);
                 }
                 break;
             case "Hoe":
@@ -274,7 +275,7 @@ public partial class TileGrid : TileMapLayer
                     PlantDataManager.SetTileInfoAtCoord(newTile);
                     _bt.SetCell(tilePos, 5);
                     _bt.UpdateTerrainCell(tilePos);
-                    StateManager.SaveState(PlantDataManager.ExportBytes(), _day);
+                    StateManager.AutoSave(PlantDataManager.ExportBytes(), _day);
                 }
                 break;
             case "Seed_One":
@@ -292,7 +293,7 @@ public partial class TileGrid : TileMapLayer
                 {
                     GD.Print("PLacing crossbreed");
                     SowPlant(PlantDataManager.GetTileInfoAtCoord(tilePos), Plant.CROSSBREED);
-                    StateManager.SaveState(PlantDataManager.ExportBytes(), _day);
+                    StateManager.AutoSave(PlantDataManager.ExportBytes(), _day);
                 }
                 break;
         }
@@ -313,7 +314,7 @@ public partial class TileGrid : TileMapLayer
         {
             TileInfo curTile = GetPlantTile(tilePos.X, tilePos.Y);
             SowPlant(curTile, Global.Plants[plantIndex]);
-            StateManager.SaveState(PlantDataManager.ExportBytes(), _day);
+            StateManager.AutoSave(PlantDataManager.ExportBytes(), _day);
         }
     }
 
