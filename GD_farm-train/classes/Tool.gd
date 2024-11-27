@@ -3,7 +3,7 @@ var tool_name : String;
 var disabled : bool;
 var texture : Texture2D;
 
-func _init(_tool_name : String, start_disabled : bool, texture_path : String) -> void:
+func _init(_tool_name : String, start_disabled : bool, texture_path : String = "") -> void:
 	if (texture_path.is_empty()):
 		texture = null;
 	else: 

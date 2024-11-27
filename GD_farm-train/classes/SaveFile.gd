@@ -11,6 +11,7 @@ class GameState extends Resource:
 @export var undo_stack : Array[GameState];
 @export var redo_stack : Array[GameState];
 
+
 func add_state(data : PackedByteArray, day : int):
 	undo_stack.push_back(GameState.new(data, day));
 	redo_stack.clear();

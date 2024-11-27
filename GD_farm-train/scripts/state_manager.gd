@@ -36,4 +36,28 @@ func new_game() -> void:
 	load_state(current_save.current_state());
 	
 func save_auto(state : PackedByteArray, day: int) -> void:
+	current_save.add_state(state, day);
+	ResourceSaver.save(current_save, save_path + auto_save_path);
+	auto_save.OverwriteWith(current_save);
+
+func save_to_file(slot : int) -> void:
+	if (slot == 0):
+		ResourceSaver.save(current_save.duplicate(), save_path + auto_save_path);
+		return
+	ResourceSaver.save(current_save.duplicate(), save_path + slots_path + str(slot) + ".tres");
 	
+func load_state(loadstate : SaveFile.GameState) -> void:
+	if (loadstate == null):
+		return;
+	cur_tile_grid.reload(loadstate.tile_info, loadstate.day);
+
+func load_from_file(slot : int) -> void:
+	var temp_savefile : SaveFile;
+	if (slot == 0):
+		temp_savefile = ResourceLoader.load(save_path + auto_save_path);
+	elif (FileAccess.file_exists(save_path + slots_path + str(slot) + ".tres")):
+		temp_savefile = ResourceLoader.load(save_path + slots_path + str(slot) + ".tres");
+	else:
+		temp_savefile = SaveFile.new();
+	current_save.OverwriteWith(temp_savefile);
+	load_state(temp_savefile.current_state());

@@ -76,14 +76,17 @@ public partial class StateManager : Node
 
     public static void LoadFromFile(int slot)
     {
+        SaveFile tempSave;
         if (slot == 0)
         {
-            LoadState(_autoSave.CurrentState());
-            return;
+            tempSave = ResourceLoader.Load<SaveFile>(SavePath + AutoSavePath, "");
         }
-        SaveFile tempSave = FileAccess.FileExists(SavePath + SlotPath + slot + ".tres")
-            ? ResourceLoader.Load<SaveFile>(SavePath + SlotPath + slot + ".tres", "")
-            : new SaveFile();
+        else
+        {
+            tempSave = FileAccess.FileExists(SavePath + SlotPath + slot + ".tres")
+                ? ResourceLoader.Load<SaveFile>(SavePath + SlotPath + slot + ".tres", "")
+                : new SaveFile();
+        }
         _currentSave.OverwriteWith(tempSave);
         LoadState(tempSave.CurrentState());
     }
