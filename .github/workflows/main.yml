@@ -1,0 +1,17 @@
+name: gdscript-toolkit-checks
+
+on:
+  push:
+    branches: [ "GDS-Port" ]
+  pull_request:
+    branches: [ "GDS-Port" ]
+
+jobs:
+  static-checks:
+    name: 'Static checks'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: Scony/godot-gdscript-toolkit@master
+    - run: gdformat --check GD_farm-train
+    - run: gdlint GD_farm-train/
