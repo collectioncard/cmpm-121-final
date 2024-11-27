@@ -12,12 +12,12 @@ var tile_info_size: int = properties.size() * DATA_SIZE;
 # This isnt compile time constant because GDscript doesnt support that. Please *DO NOT* add anything to this enum during runtime.
 # Cant enforce that though. :(
 enum properties {
-	SOIL_TYPE = 1 * DATA_SIZE,
-	PLANT_ID = 2 * DATA_SIZE,
-	MOISTURE_LEVEL = 3 * DATA_SIZE,
-	GROWTH_STAGE = 4 * DATA_SIZE,
-	COORD_X = 5 * DATA_SIZE,
-	COORD_Y = 6 * DATA_SIZE
+	SOIL_TYPE = 0 * DATA_SIZE,
+	PLANT_ID = 1 * DATA_SIZE,
+	MOISTURE_LEVEL = 2 * DATA_SIZE,
+	GROWTH_STAGE = 3 * DATA_SIZE,
+	COORD_X = 4 * DATA_SIZE,
+	COORD_Y = 5 * DATA_SIZE
 }
 
 # The GDscript packedByteArray that holds the tile data
@@ -36,6 +36,7 @@ func _init():
 #tilePos: The position of the tile.
 #returns:The value of the specified property at the given coordinate.
 func get_property_value_at_coord(property: properties, tilePos: Vector2i) -> int:
+	assert(Utils.index_from_vec(tilePos) >= 0 || Utils.index_from_vec(tilePos) < tile_data.size());
 	return tile_data.decode_s32(Utils.index_from_vec(tilePos) * tile_info_size + property);
 
 #Gets the tile info at a given coordinate.
@@ -47,8 +48,8 @@ func get_tile_info_at_coord(tilePos: Vector2i) -> TileInfo:
 		get_property_value_at_coord(properties.PLANT_ID, tilePos),
 		get_property_value_at_coord(properties.MOISTURE_LEVEL, tilePos),
 		get_property_value_at_coord(properties.GROWTH_STAGE, tilePos),
-		get_property_value_at_coord(properties.COORD_X, tilePos),
-		get_property_value_at_coord(properties.COORD_Y, tilePos)
+		tilePos.x,
+		tilePos.y
 	);
 
 	return tileInfo;
@@ -61,6 +62,7 @@ func get_tile_info_at_coord(tilePos: Vector2i) -> TileInfo:
 #tilePos: The position of the tile in the world.
 #value: The int value to set the property to.
 func set_property_value_at_coord(property: properties, tilePos: Vector2i, value: int):
+	#print_debug(tilePos)
 	tile_data.encode_s32(Utils.index_from_vec(tilePos) * tile_info_size + property, value);
 
 
@@ -69,13 +71,13 @@ func set_property_value_at_coord(property: properties, tilePos: Vector2i, value:
 #tilePos: The position of the tile in the world.
 #tileInfo: The TileInfo object to set the tile to.
 func set_tile_info_at_coord(tilePos: Vector2i, tileInfo: TileInfo):
-	var tile_index := Utils.tile_from_vec(tilePos);
-	set_property_value_at_coord(properties.SOIL_TYPE, tile_index, tileInfo.soil_type);
-	set_property_value_at_coord(properties.PLANT_ID, tile_index, tileInfo.plant_id);
-	set_property_value_at_coord(properties.MOISTURE_LEVEL, tile_index, tileInfo.moisture_level);
-	set_property_value_at_coord(properties.GROWTH_STAGE, tile_index, tileInfo.growth_stage);
-	set_property_value_at_coord(properties.COORD_X, tile_index, tileInfo.coord_x);
-	set_property_value_at_coord(properties.COORD_Y, tile_index, tileInfo.coord_y);
+	print_debug(tilePos);
+	set_property_value_at_coord(properties.SOIL_TYPE, tilePos, tileInfo.soil_type);
+	set_property_value_at_coord(properties.PLANT_ID, tilePos, tileInfo.plant_id);
+	set_property_value_at_coord(properties.MOISTURE_LEVEL, tilePos, tileInfo.moisture_level);
+	set_property_value_at_coord(properties.GROWTH_STAGE, tilePos, tileInfo.growth_stage);
+	set_property_value_at_coord(properties.COORD_X, tilePos, tileInfo.coord_x);
+	set_property_value_at_coord(properties.COORD_Y, tilePos, tileInfo.coord_y);
 
 ####**** Export and Clear Tile Data ****####
 
@@ -100,13 +102,13 @@ class TileInfo:
 	var coord_x := 0;
 	var coord_y := 0;
 
-	func _init(soil_type, plant_id, moisture_level, growth_stage, coord_x, coord_y):
-		self.soil_type = soil_type;
-		self.plant_id = plant_id;
-		self.moisture_level = moisture_level;
-		self.growth_stage = growth_stage;
-		self.coord_x = coord_x;
-		self.coord_y = coord_y;
+	func _init(_soil_type, _plant_id, _moisture_level, _growth_stage, _coord_x, _coord_y):
+		self.soil_type = _soil_type;
+		self.plant_id = _plant_id;
+		self.moisture_level = _moisture_level;
+		self.growth_stage = _growth_stage;
+		self.coord_x = _coord_x;
+		self.coord_y = _coord_y;
 
 
 	func get_coordinates() -> Vector2:

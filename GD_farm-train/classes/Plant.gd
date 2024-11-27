@@ -28,10 +28,21 @@ func _init(_id: int, _texturePaths : Array[String], _growthRate : float, _growth
 func get_type_name() -> int:
 	return id;
 	
+func growth_check(sun : int, moisture: int, _neighbors : Array = []):
+	var moisture_check : bool = false;
+	var sun_check : bool = false;
+	
+	if (sun >= sun_needed):
+		sun_check = true;
+	if (moisture >= moisture_needed):
+		moisture_check = true;
+		
+	return sun_check && moisture_check;
+	
 func add_offspring(newOffspring : Plant) -> void:
 	offspring.push_back(newOffspring);
 
-func choose_offspring(parentA : Plant, parentB : Plant) -> Plant:
+static func choose_offspring(parentA : Plant, parentB : Plant) -> Plant:
 	var validOffspring : Array[Plant];
 	#TODO: Not O(n^2) solution
 	for _offspring in parentA.offspring:

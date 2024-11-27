@@ -1,24 +1,19 @@
 class_name SaveFile extends Resource
 
-class GameState extends Resource:
-	@export var tile_info : PackedByteArray = PackedByteArray();
-	@export var day : int;
-	func _init(data : PackedByteArray, _day : int = 0) -> void:
-		tile_info = data.duplicate();
-		day = _day;
-
-
 @export var undo_stack : Array[GameState];
 @export var redo_stack : Array[GameState];
 
+func _init(_undo_stack : Array[GameState] = [], _redo_stack : Array[GameState] = []) -> void:
+	undo_stack = _undo_stack.duplicate();
+	redo_stack = _undo_stack.duplicate();
 
 func add_state(data : PackedByteArray, day : int):
-	undo_stack.push_back(GameState.new(data, day));
+	undo_stack.push_back(GameState.new().create(data, day));
 	redo_stack.clear();
 	
 func current_state() -> GameState:
 	if (undo_stack.is_empty()):
-		return GameState.new([]);
+		return GameState.new().create();
 	return undo_stack.back();
 	
 func undo() -> GameState:
@@ -27,7 +22,7 @@ func undo() -> GameState:
 	var temp : GameState = undo_stack.pop_back();
 	redo_stack.push_back(temp);
 	if (undo_stack.is_empty()):
-		return GameState.new([])
+		return GameState.new().create();
 	else:
 		return undo_stack.back();
 		

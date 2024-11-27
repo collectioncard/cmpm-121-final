@@ -15,7 +15,7 @@ func vec_from_idx(idx: int) -> Vector2i:
 		push_error("Invald idx OOB");
 	return Vector2i(idx % Global.TILE_MAP_SIZE.x, idx / Global.TILE_MAP_SIZE.x);
 
-func tile_from_vec(globalPos : Vector2i) -> Vector2i:
+func tile_from_vec(globalPos : Vector2) -> Vector2:
 		var x : int = floor((globalPos.x) / Global.TILE_WIDTH) * Global.TILE_WIDTH;
 		var y : int = floor((globalPos.y) / Global.TILE_HEIGHT) * Global.TILE_HEIGHT;
 		return Vector2i(x, y);

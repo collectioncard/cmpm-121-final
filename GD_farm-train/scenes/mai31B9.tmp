@@ -1,12 +1,12 @@
 [gd_scene load_steps=9 format=4 uid="uid://d14wjww6re8oi"]
 
-[ext_resource type="Script" path="res://scripts/MouseInputManager.gd" id="1_o4xd4"]
+[ext_resource type="Script" path="res://scenes/MouseInputManager.gd" id="1_o4xd4"]
 [ext_resource type="PackedScene" uid="uid://cakaeaw1gr5mb" path="res://scenes/saveMenu.tscn" id="2_rbwh6"]
 [ext_resource type="Script" path="res://scripts/Win.gd" id="2_tdk3b"]
 [ext_resource type="Texture2D" uid="uid://bakp2lilgrggi" path="res://assets/itemFrame.png" id="3_fn6l6"]
 [ext_resource type="Texture2D" uid="uid://doo1lgf4mu48q" path="res://assets/tiles.png" id="3_lqs3n"]
 [ext_resource type="TileSet" uid="uid://c5fe35qjrbfls" path="res://scenes/tilesets/mainTileset.tres" id="6_qq7f8"]
-[ext_resource type="Script" path="res://scripts/tile_grid.gd" id="7_4evb2"]
+[ext_resource type="Script" path="res://scenes/tile_grid.gd" id="7_4evb2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xlc1h"]
 atlas = ExtResource("3_lqs3n")

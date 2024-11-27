@@ -20,7 +20,7 @@ func _ready() -> void:
 		auto_save = SaveFile.new();
 		
 	current_save = auto_save;
-	#TODO: call_deferred(load)
+	call_deferred("load_state", current_save.current_state());
 	
 func _input(event: InputEvent) -> void:
 	if (event.is_action_pressed("undo")):
@@ -46,7 +46,7 @@ func save_to_file(slot : int) -> void:
 		return
 	ResourceSaver.save(current_save.duplicate(), save_path + slots_path + str(slot) + ".tres");
 	
-func load_state(loadstate : SaveFile.GameState) -> void:
+func load_state(loadstate : GameState) -> void:
 	if (loadstate == null):
 		return;
 	cur_tile_grid.reload(loadstate.tile_info, loadstate.day);
