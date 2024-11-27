@@ -40,3 +40,39 @@ Team Members: Thomas Wessel, Jacqueline Gracey, Jarod Spangler, Jack Wilhelm
 
 ## Reflection
 During the process of making our game we made a couple changes on our outlook. One was that one of our original game goals was to add a train system into our game. Fearing this may be stepping too far and overestimating our abilities we decided that a train would be an addition if/when our other tasks were completed. To keep our game unique however we decided to implement a crossbreeding system because one of our team members was very confident in their ability to easily implement this design. When starting on our project, we quickly decided to split the work amongst branches. Once each member's work was complete, the branches were brought together and merged into main. We implemented some pre-commit hooks to better organize our work, help keep styling across branches more consistent, and make sure code was only pushed when it could build successfully. Our original idea for roles quickly changed as team members found less value offering some goals and turned more towards helping write code. Our goals for using C# in Godot remains the same as our members have become accustomed to the platform. For the future however, we will continue to find ways to face our original outlook challenge and continue to work towards making our code accessible to and readable to new eyes.
+
+
+# Devlog Entry - [11/27/24]
+
+## How we satisfied the software requirements
+
+### F0 Requirements:
+ * **[F0.a]**: This system has not changed in the latest version of our game
+ * **[F0.b]**: This system has not changed in the latest version of our game
+ * **[F0.c]**: This system has not changed in the latest version of our game
+ * **[F0.d]**: This system has not changed in the latest version of our game
+ * **[F0.e]**: This system has not changed in the latest version of our game
+ * **[F0.f]**: This system has not changed in the latest version of our game    
+ * **[F0.g]**: This system has not changed in the latest version of our game
+    
+### F1 Requirements:
+* **[F1.a]**:In our implementation, we used an array of structs style format for our contiguous byte array. This allows us to easily store structs passed to our datastructure and return them when requested. We store every value of the game's core data as a 32 bit signed int which allows for us to easily find an element's offset in the array based on its coordinate on the map + the property's offset given by an enum. Any information that we don't directly store can be derived from the data that we store.
+	* The byte Array contains multiple instances of this layout with offsets given by the map coordinate of the tile: 
+		```mermaid
+		packet-beta
+		0-31: "SoilType (int)"
+		32-63: "PlantId (int)"
+		64-95: "MoistureLevel (int)"
+		96-127: "GrowthStage (int)"
+		128-159: "CoordX (int)"
+		160-191: "CoordY (int)"
+
+		```
+
+* **[F1.b]**: For the manual progression save we have created a menu that the player can bring up with a drop down for the save slots and buttons from New Game, Save, and Load. Save and Load will save/load the game to/from the specific selected save slot. New game will initiate a new game but not erase the old save slots unless the player manually overwrites them. More on how saves work below.
+* **[F1.c]**: Our auto save feature activates after any major action, an action which changes the game’s state, such as using a tool or changing the day, simply moving or changing the selected tool does not persist as they do not affect the state of the tile grid. An existing autosave is loaded by default when opening up the game after quitting, and the autosave has a specified save slot in our save menu so the player can still choose to manually save or load it.
+* **[F1.d]**: Every state change of the game pushes the necessary data into a GameState object, which holds the data from the contiguous byte array. These GameStates are held in SaveFile objs which have undo and redo stacks, and functions to support undo/redo and saving/loading. Simply put, undoing and redoing will pull a copy of the GameState on the top of either stack, which is removed from that stack, then pushed to the other. The temp GameState is then loaded to rebuild the game’s state with. This way all save files keep their history of GameStates allowing for undoing all the way back to the original.
+
+## Reflection
+This was a bit of an undertaking, and with F2 being due so closely after, we had little time to iterate on the overall design. So there have been little to no gameplay changes. No extra player feedback, or anything like that. We already had a sense of eventually needing to make a contiguous byte array, so we already had data stored in an array of structs, so there was just some trouble in trying to switch to a byte[] over the course of multiple smaller refactors. Undo/redo didn’t really fit in our vision of the game, so it functions as a brute force approach of just storing the entire state of the game, and reloading it. Then we had to change how we got the data from our main array to the body of the main game structure (TileGrid). Saving and loading is facilitated by Godot’s resource saver, which makes it very easy to save and load custom objects to just throw in arrays of entire game states. 
+
