@@ -20,9 +20,13 @@ func _ready() -> void:
 	save_selector.select(0)
 
 	menu_popup.hide()
+	
+	save_button.pressed.connect(_on_save_button_button_down);
+	load_button.pressed.connect(_on_load_button_button_down);
+	new_game_button.pressed.connect(_on_new_game_button_button_down);
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("menu"):
 		if menu_popup.visible:
 			menu_popup.hide();
@@ -43,4 +47,5 @@ func _on_save_button_button_down() -> void:
 
 
 func _on_new_game_button_button_down() -> void:
+	print_debug("New game");
 	StateManager.new_game();

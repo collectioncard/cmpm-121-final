@@ -1,7 +1,10 @@
-[gd_scene format=3 uid="uid://cakaeaw1gr5mb"]
+[gd_scene load_steps=2 format=3 uid="uid://cakaeaw1gr5mb"]
+
+[ext_resource type="Script" path="res://scripts/save_menu.gd" id="1_g80vy"]
 
 [node name="MenuCanvas" type="CanvasLayer"]
 process_mode = 3
+script = ExtResource("1_g80vy")
 
 [node name="MenuPopup" type="Popup" parent="."]
 auto_translate_mode = 1
