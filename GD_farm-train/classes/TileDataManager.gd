@@ -16,8 +16,6 @@ enum properties {
 	PLANT_ID = 1 * DATA_SIZE,
 	MOISTURE_LEVEL = 2 * DATA_SIZE,
 	GROWTH_STAGE = 3 * DATA_SIZE,
-	COORD_X = 4 * DATA_SIZE,
-	COORD_Y = 5 * DATA_SIZE
 }
 
 # The GDscript packedByteArray that holds the tile data
@@ -76,8 +74,6 @@ func set_tile_info_at_coord(tilePos: Vector2i, tileInfo: TileInfo):
 	set_property_value_at_coord(properties.PLANT_ID, tilePos, tileInfo.plant_id);
 	set_property_value_at_coord(properties.MOISTURE_LEVEL, tilePos, tileInfo.moisture_level);
 	set_property_value_at_coord(properties.GROWTH_STAGE, tilePos, tileInfo.growth_stage);
-	set_property_value_at_coord(properties.COORD_X, tilePos, tileInfo.coord_x);
-	set_property_value_at_coord(properties.COORD_Y, tilePos, tileInfo.coord_y);
 
 ####**** Export and Clear Tile Data ****####
 

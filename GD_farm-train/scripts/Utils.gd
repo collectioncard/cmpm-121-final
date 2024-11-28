@@ -13,6 +13,7 @@ func index_from_vec(tilePos : Vector2i) -> int:
 func vec_from_idx(idx: int) -> Vector2i:
 	if (idx < 0 || idx >= Global.TILE_MAP_SIZE.x * Global.TILE_MAP_SIZE.y):
 		push_error("Invald idx OOB");
+	@warning_ignore("integer_division")
 	return Vector2i(idx % Global.TILE_MAP_SIZE.x, idx / Global.TILE_MAP_SIZE.x);
 
 func tile_from_vec(globalPos : Vector2) -> Vector2:

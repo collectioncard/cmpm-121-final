@@ -4,6 +4,7 @@ var PlantDataManager : TileDataManager = TileDataManager.new();
 static var cur_day : int = 0;
 var tile_sprites : Array[Sprite2D];
 
+
 @warning_ignore("unused_signal")
 signal Unlock;
 
@@ -28,7 +29,7 @@ func turn_day(tileInfo : TileDataManager.TileInfo) -> int:
 func grow(tileInfo : TileDataManager.TileInfo):
 	if (is_mature(tileInfo)):
 		return;
-	if (!get_plant_type(tileInfo).growth_check(calc_sun(tileInfo), calc_moisture(tileInfo))):
+	if (!get_plant_type(tileInfo).growth_check(calc_sun(tileInfo), calc_moisture(tileInfo), calc_neighbors(tileInfo))):
 		return;
 	print_debug("Grow");
 	print_debug("Current stage: " + str(tileInfo.growth_stage));
@@ -57,6 +58,17 @@ func calc_moisture(tileInfo : TileDataManager.TileInfo) -> int:
 		tileInfo.get_coordinates(),
 		result
 	);
+	return result;
+func calc_neighbors(tileInfo : TileDataManager.TileInfo) -> Array[int]:
+	var result : Array[int];
+	if (BetterTerrain.get_cell(self, (tileInfo.get_coordinates() as Vector2i) + Vector2i.LEFT) == 5):
+		result.push_back(PlantDataManager.get_property_value_at_coord(TileDataManager.properties.PLANT_ID, tileInfo.get_coordinates() + Vector2.LEFT));
+	if (BetterTerrain.get_cell(self, (tileInfo.get_coordinates() as Vector2i) + Vector2i.UP) == 5):
+		result.push_back(PlantDataManager.get_property_value_at_coord(TileDataManager.properties.PLANT_ID, tileInfo.get_coordinates() + Vector2.UP));
+	if (BetterTerrain.get_cell(self, (tileInfo.get_coordinates() as Vector2i) + Vector2i.RIGHT) == 5):
+		result.push_back(PlantDataManager.get_property_value_at_coord(TileDataManager.properties.PLANT_ID, tileInfo.get_coordinates() + Vector2.RIGHT));
+	if (BetterTerrain.get_cell(self, (tileInfo.get_coordinates() as Vector2i) + Vector2i.DOWN) == 5):
+		result.push_back(PlantDataManager.get_property_value_at_coord(TileDataManager.properties.PLANT_ID, tileInfo.get_coordinates() + Vector2.DOWN));
 	return result;
 
 func propagate(tileInfo : TileDataManager.TileInfo) -> int:
@@ -161,7 +173,6 @@ func tile_click(pos : Vector2, tool : Tool) -> void:
 				print_debug(tile_pos);
 				var tile : TileDataManager.TileInfo = TileDataManager.TileInfo.new(BetterTerrain.get_cell(self, tile_pos), 
 				-1, 0, 0, tile_pos.x, tile_pos.y);
-				print_debug(tile.coord_x);
 				PlantDataManager.set_tile_info_at_coord(tile.get_coordinates(), tile);
 				BetterTerrain.set_cell(self, tile_pos, 5);
 				BetterTerrain.update_terrain_cell(self, tile_pos);
@@ -182,7 +193,7 @@ func _input(event: InputEvent) -> void:
 		get_parent().get_node("%DayLabel").text = "Day: " + str(cur_day);
 		
 func plant_seed(tile_pos : Vector2i, plant_idx : int):
-	if (BetterTerrain.get_cell(self, tile_pos) == 5 && get_plant_type(get_plant_tile(tile_pos.x, tile_pos.y)) == null):
+	if (BetterTerrain.get_cell(self, tile_pos) == 5 && get_plant_type(get_plant_tile(tile_pos.x, tile_pos.y)) == null && Global.Plants[plant_idx].planting_check(get_plant_tile(tile_pos.x, tile_pos.y).soil_type)):
 		sow_plant(get_plant_tile(tile_pos.x, tile_pos.y), Global.Plants[plant_idx]);
 		StateManager.save_auto(PlantDataManager.export_tile_data(), cur_day)
 

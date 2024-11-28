@@ -27,7 +27,7 @@ func initialize_tools() -> void:
 		Tool.new("Hoe", false, "res://assets/trowel.png"),
 		Tool.new("Cross_Breed_Tool", false, "res://assets/plants/idkwhattocallthis.png"),
 		Tool.new("Seed_One", false, "res://assets/plants/plant1-0.png"),
-		Tool.new("Seed_two", true, "res://assets/plants/plant2-0.png")];
+		Tool.new("Seed_Two", true, "res://assets/plants/plant2-0.png")];
 	cur_tool_idx = 0;
 	
 func connect_to_grid() -> void:
