@@ -1,0 +1,16 @@
+How to read elements:
+    element name -> [example] {format} (additional notes)
+Required elements of a Plant:
+    name -> ["name", "examplename"] {string, string}
+    textures -> ["textures", "texture1.png,texture2.png,texture3.png"] {string, string}
+Optional elements of a Plant:
+    moisture -> ["moisture", "low"] {string, string} (accepts "low", "medium", or "high")
+    sun -> ["sun", "high"] {string, string} (accepts "low", "medium", or "high")
+    soil -> ["soil", ["sand","dirt"]] {string, string} (soil types: sand, dirt, grass, and water)
+    neighbors -> ["neighbors", [[1,"Moonshade"],[2,"Eezeegrow"]]] {string, [[int, string]]}
+    offspring -> ["offspring", ["Exotitrum","Moonshade"]] {string, [string]}
+Order of elements:
+    [name, sun, moisture, soil, neighbors, textures, offspring]
+Example PlantType:
+    [["name", "Redroot"], ["sun", "medium"],["moisture", "medium"],["soil", ["grass","dirt"]],["neighbors", [[4, "Redroot"]]],["textures", ["res://assets/plants/plant1-1.png","res://assets/plants/plant1-2.png", "res://assets/plants/plant1-3.png"]],["offspring", ["Mudskipper Plant","Moonshade","PickyStick","Eezeegrow"]]]
+
