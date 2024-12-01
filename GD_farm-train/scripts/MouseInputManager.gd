@@ -22,6 +22,7 @@ func make_player() -> void:
 	player.play();
 	
 func initialize_tools() -> void:
+	#TODO: Add seeds based on plants.
 	Tools = [
 		Tool.new("Open_Hand", false),
 		Tool.new("Hoe", false, "res://assets/trowel.png"),
@@ -34,8 +35,27 @@ func connect_to_grid() -> void:
 	Tile_Click.connect(StateManager.cur_tile_grid.tile_click);
 	StateManager.cur_tile_grid.Unlock.connect(unlock);
 	
+@export var win_plant_id : int = -1;
+@export var win_amount : int = 0;
+var win_cur_count : int = 0;
+	
+func get_win_con() -> void:
+	var cur_scenario : Dictionary = Global.Scenarios[Global.cur_scene];
+	win_cur_count = 0;
+	if (!cur_scenario.has("win")):
+		print_debug("Scenario has no win con!");
+		return;
+	else:
+		if (!cur_scenario["win"].has_all(["plant", "amount"])):
+			print_debug("Invalid win con! Allowing game to run, intended behaviour may follow!");
+			return;
+		win_plant_id = Global.plant_name_id_dict[cur_scenario["win"]["plant"]];
+		win_amount = cur_scenario["win"]["amount"] as int;
+		
+	
 func _ready() -> void:
 	StateManager.cur_tile_grid = get_node("TileGrid");
+	get_win_con();
 	connect_to_grid();
 	make_tile_cursor();
 	make_player();
@@ -91,10 +111,20 @@ func _input(event: InputEvent) -> void:
 			cur_tool_idx = (cur_tool_idx - 1) % Tools.size();
 		get_node("%ToolTexture").texture = Tools[cur_tool_idx].texture;
 
-	
+#TODO: Rework for var num plants, oh god.
+#TODO: More complex win cons.
 func unlock(unlockee : int) -> void:
+	if (unlockee == win_plant_id):
+		win_cur_count += 1;
+	if (win_cur_count == win_amount):
+		if (Global.cur_scene < Global.Scenarios.size() - 1):
+			Global.cur_scene += 1;
+			get_win_con();
+			StateManager.cur_tile_grid.read_scenario();
+		else:
+			get_node("Win").playerWin();
+
 	match unlockee:
 		2:
 			Tools[4].disabled = false;
-			get_node("Win").playerWin();
 		

@@ -59,10 +59,10 @@ func random_level(tileInfo : TileDataManager.TileInfo) -> int:
 	return temp_rng.randi_range(0, 100);
 	
 func calc_sun(tileInfo : TileDataManager.TileInfo) -> int:
-	return random_level(tileInfo);
+	return round(random_level(tileInfo) * cur_weather_conds.x);
 func calc_moisture(tileInfo : TileDataManager.TileInfo) -> int:
 	var result : int = tileInfo.moisture_level;
-	result += random_level(tileInfo);
+	result += round(random_level(tileInfo) * cur_weather_conds.y);
 	PlantDataManager.set_property_value_at_coord(
 		TileDataManager.properties.MOISTURE_LEVEL,
 		tileInfo.get_coordinates(),
@@ -146,39 +146,66 @@ var initial_tiles : PackedByteArray;
 func _ready() -> void:
 	read_scenario();
 	tile_sprites.resize(Global.TILE_MAP_SIZE.x * Global.TILE_MAP_SIZE.y);
-	initial_tiles = get_tile_map_data_as_array();
+	initialize_map();
 
 #TODO: Refine
-const map_paths : Dictionary = {
+const map_paths : Dictionary = { #Otehr cases "" : fully empty, "premade" : initial map
 	"low_water": "res://scenes/maps/low_water.tscn",
-	"river" : "res://scenes/maps/river.tscn"
+	"river" : "res://scenes/maps/river.tscn",
 }
 
 #TODO: double check if this could work as an enum
+#TODO: ability to define weathers in scenarios
 const weather_conditions : Dictionary = { #x : sun modifier, y: moisture
 	"rainy": Vector2(.75, 1.2),
 	"sunny": Vector2(1.25, .8),
 	"overcast": Vector2(.8, .9),
-	"average": Vector2(1, 1)
+	"average": Vector2.ONE
 }
 
 var weathers : Array[String];
 var weather_weights : PackedFloat32Array;
 
 var weather_schedule : Dictionary = {};
-
-var cur_weather_conds : Vector2;
+@export var cur_weather_conds : Vector2;
 
 func read_scenario() -> void:
 	var cur_scenario : Dictionary = Global.Scenarios[Global.cur_scene];
-	#weather and weighst
+	#weather and weights
 	if (cur_scenario.has("weather")):
+		var weights : Array[float] = [];
+		weathers = [];
 		assert(cur_scenario["weather"] is Dictionary, "Invalid weather weights in scenario!");
-		for weather_key in cur_scenario["weather"].keys:
+		for weather_key in cur_scenario["weather"].keys():
 			weathers.push_back(weather_key);
-			weather_weights.push_back(cur_scenario["weather"][weather_key]);
+			weights.push_back(cur_scenario["weather"][weather_key]);
+		weather_weights = PackedFloat32Array(weights);
 	if (cur_scenario.has("schedule")):
 		weather_schedule = cur_scenario["schedule"];
+		
+func initialize_map() -> void:
+	var map_string : String = Global.scene_dict.get("map", "river");
+	if (map_string == "premade"):
+		initial_tiles = get_tile_map_data_as_array();
+		return;
+	if (map_string == ""):
+		set_tile_map_data_from_array([]);
+	else:
+		var sample_layer : TileMapLayer = load(map_paths[map_string]).instantiate();
+		set_tile_map_data_from_array(sample_layer.get_tile_map_data_as_array());
+	generate_map();
+	initial_tiles = get_tile_map_data_as_array();
+
+#really ugly but it works!
+func generate_map() -> void:
+	var model = load("res://scenes/WFC/Output/world_map_model.tres");
+	var WFC = WFC_Solver.new();
+	WFC.pre_initialize(model, self);
+	WFC.populate_WFC(self);
+	var tm = WFC.generate_with_time_machine(Global.Seed);
+	tm.draw_map();
+	BetterTerrain.update_terrain_area(self, Rect2(0, 0, 40, 23), true);
+
 
 func day_passed() -> void:
 	for i in (Global.TILE_MAP_SIZE.x * Global.TILE_MAP_SIZE.y):
@@ -189,7 +216,19 @@ func day_passed() -> void:
 		var queue_unlock : int = turn_day(PlantDataManager.get_tile_info_at_coord(Utils.vec_from_idx(i)));
 		emit_signal("Unlock", queue_unlock);
 	cur_day += 1;
+	pick_weather();
 	StateManager.save_auto(PlantDataManager.export_tile_data(), cur_day);
+	
+func pick_weather() -> void:
+	if (weather_schedule.has(str(cur_day))):
+		cur_weather_conds = weather_conditions.get(weather_schedule[str(cur_day)], Vector2.ONE);
+		get_parent().get_node("%WeatherLabel").text = weather_schedule[str(cur_day)];
+		return;
+	var rng := RandomNumberGenerator.new();
+	rng.seed = Global.Seed + cur_day;
+	var rIdx : int = rng.rand_weighted(weather_weights);
+	get_parent().get_node("%WeatherLabel").text = weathers[rIdx];
+	cur_weather_conds = weather_conditions.get(weathers[rIdx], Vector2.ONE);
 
 	
 func tile_click(pos : Vector2, tool : Tool) -> void:
@@ -220,7 +259,7 @@ func tile_click(pos : Vector2, tool : Tool) -> void:
 				print_debug("Crossbreed planting!");
 				sow_plant(PlantDataManager.get_tile_info_at_coord(tile_pos), Plant.CROSSBREED);
 				StateManager.save_auto(PlantDataManager.export_tile_data(), cur_day);
-				
+					
 func _input(event: InputEvent) -> void:
 	if (event.is_action_pressed("nextDay")):
 		day_passed();
@@ -243,6 +282,7 @@ func reload(new_state : PackedByteArray, day : int) -> void:
 	else:
 		PlantDataManager.overwrite_tile_data(new_state);
 	cur_day = day;
+	pick_weather();
 	get_parent().get_node("%DayLabel").text = "Day: " + str(cur_day);
 
 	for i in (Global.TILE_MAP_SIZE.x * Global.TILE_MAP_SIZE.y):

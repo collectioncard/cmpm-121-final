@@ -29,6 +29,14 @@ script = ExtResource("2_tdk3b")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
+[node name="WeatherLabel" type="Label" parent="UI"]
+unique_name_in_owner = true
+offset_left = 61.0
+offset_right = 102.0
+offset_bottom = 23.0
+text = "Clear
+"
+
 [node name="DayLabel" type="Label" parent="UI"]
 unique_name_in_owner = true
 offset_right = 40.0
