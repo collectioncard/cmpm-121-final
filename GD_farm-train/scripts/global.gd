@@ -1,9 +1,12 @@
 extends Node
 
 #TODO: Spread these vars to the classes that actually need them
-var Seed : int = 0;
+var Seed : int = 1;
 var rng : RandomNumberGenerator = RandomNumberGenerator.new();
-const plant_types : int = 3;
+var Map_Type : String = "";
+@export var Scenarios : Array; #yummy array of dictionary dictionaries
+var cur_scene : int = 0;
+
 const TILE_WIDTH : int = 16;
 const TILE_HEIGHT : int = 16;
 const SPRITE_OFFSET : Vector2 = Vector2(8, 8);
@@ -12,7 +15,7 @@ const INTERACTION_RADIUS : float = 4 * TILE_HEIGHT;
 const TILE_MAP_SIZE : Vector2i = Vector2i(40, 23);
 
 func _ready() -> void:
-	Seed = 1;
+	read_scenarios();
 	rng.set_seed(Seed);
 	construct_plants();
 
@@ -77,3 +80,36 @@ func add_plant_class(defin : PlantDef) -> Plant:
 		result.add_offspring(plant_name_id_dict[offspring_name]);
 	
 	return result;
+	
+const cardinality_transformations: Dictionary = {
+	1: TileSetAtlasSource.TRANSFORM_TRANSPOSE | TileSetAtlasSource.TRANSFORM_FLIP_V,
+	2: TileSetAtlasSource.TRANSFORM_FLIP_H | TileSetAtlasSource.TRANSFORM_FLIP_V,
+	3: TileSetAtlasSource.TRANSFORM_TRANSPOSE | TileSetAtlasSource.TRANSFORM_FLIP_H,
+	4: TileSetAtlasSource.TRANSFORM_FLIP_H,
+	5: TileSetAtlasSource.TRANSFORM_TRANSPOSE | TileSetAtlasSource.TRANSFORM_FLIP_H | TileSetAtlasSource.TRANSFORM_FLIP_V,
+	6: TileSetAtlasSource.TRANSFORM_FLIP_V,
+	7: TileSetAtlasSource.TRANSFORM_TRANSPOSE
+}
+
+var scene_json : String;
+@export var scene_dict : Dictionary;
+
+func read_scenarios() -> void:
+	if (FileAccess.file_exists("user://mods/scenarios/scenario.json")):
+		print_debug("Found external scenarios! Attempting parse!");
+		scene_json = FileAccess.get_file_as_string("user://mods/scenarios/scenario.json");
+	else:
+		print_debug("No external scenarios! Using default!");
+		scene_json = FileAccess.get_file_as_string("res://scenes/maps/scenario.json");
+		
+	scene_dict = JSON.parse_string(scene_json);
+	assert(validate_scenarios(scene_dict), "No valid scenarios found!");
+	
+	Seed = scene_dict.get_or_add("seed", Global.Seed);
+	Map_Type = scene_dict.get_or_add("map", Global.Map_Type);
+	Scenarios = scene_dict.get("scenarios");
+	
+	
+#TODO: Add better validity checking.
+func validate_scenarios(scenes : Dictionary) -> bool:
+	return scenes.has("scenarios") && !(scenes["scenarios"] as Array).is_empty();

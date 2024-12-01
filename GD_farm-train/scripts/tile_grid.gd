@@ -8,6 +8,16 @@ var tile_sprites : Array[Sprite2D];
 @warning_ignore("unused_signal")
 signal Unlock;
 
+func get_plant_tile(x : int, y : int) -> TileDataManager.TileInfo:
+	if (has_tile(x, y)):
+		return PlantDataManager.get_tile_info_at_coord(Vector2i(x, y));
+	return TileDataManager.TileInfo.new(-1, -1, -1, -1, -1, -1);
+
+func has_tile(x : int, y : int) -> bool:
+	if (x < 0 || x >= Global.TILE_MAP_SIZE.x || y < 0 || y >= Global.TILE_MAP_SIZE.y):
+		return false;
+	return PlantDataManager.get_tile_info_at_coord(Vector2i(x, y)).soil_type != 0;
+
 #region Plants
 func get_plant_type(tileInfo : TileDataManager.TileInfo) -> Plant:
 	if (tileInfo.plant_id == -1 or tileInfo.soil_type == 0):
@@ -130,6 +140,46 @@ func harvest(tileInfo : TileDataManager.TileInfo) -> void:
 	tile_sprites[Utils.index_from_vec(tileInfo.get_coordinates())].texture = null;
 #endregion
 
+var initial_tiles : PackedByteArray;
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	read_scenario();
+	tile_sprites.resize(Global.TILE_MAP_SIZE.x * Global.TILE_MAP_SIZE.y);
+	initial_tiles = get_tile_map_data_as_array();
+
+#TODO: Refine
+const map_paths : Dictionary = {
+	"low_water": "res://scenes/maps/low_water.tscn",
+	"river" : "res://scenes/maps/river.tscn"
+}
+
+#TODO: double check if this could work as an enum
+const weather_conditions : Dictionary = { #x : sun modifier, y: moisture
+	"rainy": Vector2(.75, 1.2),
+	"sunny": Vector2(1.25, .8),
+	"overcast": Vector2(.8, .9),
+	"average": Vector2(1, 1)
+}
+
+var weathers : Array[String];
+var weather_weights : PackedFloat32Array;
+
+var weather_schedule : Dictionary = {};
+
+var cur_weather_conds : Vector2;
+
+func read_scenario() -> void:
+	var cur_scenario : Dictionary = Global.Scenarios[Global.cur_scene];
+	#weather and weighst
+	if (cur_scenario.has("weather")):
+		assert(cur_scenario["weather"] is Dictionary, "Invalid weather weights in scenario!");
+		for weather_key in cur_scenario["weather"].keys:
+			weathers.push_back(weather_key);
+			weather_weights.push_back(cur_scenario["weather"][weather_key]);
+	if (cur_scenario.has("schedule")):
+		weather_schedule = cur_scenario["schedule"];
+
 func day_passed() -> void:
 	for i in (Global.TILE_MAP_SIZE.x * Global.TILE_MAP_SIZE.y):
 		if (PlantDataManager.get_property_value_at_coord(TileDataManager.properties.SOIL_TYPE, Utils.vec_from_idx(i)) == 0):
@@ -140,23 +190,7 @@ func day_passed() -> void:
 		emit_signal("Unlock", queue_unlock);
 	cur_day += 1;
 	StateManager.save_auto(PlantDataManager.export_tile_data(), cur_day);
-	
-func get_plant_tile(x : int, y : int) -> TileDataManager.TileInfo:
-	if (has_tile(x, y)):
-		return PlantDataManager.get_tile_info_at_coord(Vector2i(x, y));
-	return TileDataManager.TileInfo.new(-1, -1, -1, -1, -1, -1);
 
-func has_tile(x : int, y : int) -> bool:
-	if (x < 0 || x >= Global.TILE_MAP_SIZE.x || y < 0 || y >= Global.TILE_MAP_SIZE.y):
-		return false;
-	return PlantDataManager.get_tile_info_at_coord(Vector2i(x, y)).soil_type != 0;
-	
-var initial_tiles : PackedByteArray;
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	tile_sprites.resize(Global.TILE_MAP_SIZE.x * Global.TILE_MAP_SIZE.y);
-	initial_tiles = get_tile_map_data_as_array();
 	
 func tile_click(pos : Vector2, tool : Tool) -> void:
 	var tile_pos : Vector2i = local_to_map(pos);

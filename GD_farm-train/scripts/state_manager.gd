@@ -47,7 +47,7 @@ func save_to_file(slot : int) -> void:
 	ResourceSaver.save(current_save.duplicate(), save_path + slots_path + str(slot) + ".tres");
 	
 func load_state(loadstate : GameState) -> void:
-	if (loadstate == null):
+	if (loadstate == null or cur_tile_grid == null):
 		return;
 	cur_tile_grid.reload(loadstate.tile_info, loadstate.day);
 
