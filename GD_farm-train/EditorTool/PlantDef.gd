@@ -39,8 +39,8 @@ enum SunLevels {
 
 @export var sun : SunLevels;
 
-##String names of plants (WHICH SHOULD EXIST IN PLANT DICT). Maximum of 4 neighbors. Each entry should be a name. Case-Sensitive
+##String names of plants (WHICH SHOULD EXIST IN PLANT DICT by run time). Maximum of 4 neighbors. Each entry should be a name. Case-Sensitive
 @export var needed_neighbors : Array[String];
 
-##String names of plants (WHICH SHOULD EXIST IN PLANT DICT by compile time).
+##String names of plants (WHICH SHOULD EXIST IN PLANT DICT by run time).
 @export var offspring : Array[String];

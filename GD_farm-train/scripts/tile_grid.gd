@@ -4,8 +4,7 @@ var PlantDataManager : TileDataManager = TileDataManager.new();
 static var cur_day : int = 0;
 var tile_sprites : Array[Sprite2D];
 
-
-@warning_ignore("unused_signal")
+@warning_ignore("unused_signal") #signal is used, idk
 signal Unlock;
 
 func get_plant_tile(x : int, y : int) -> TileDataManager.TileInfo:
@@ -180,6 +179,9 @@ func read_scenario() -> void:
 			weathers.push_back(weather_key);
 			weights.push_back(cur_scenario["weather"][weather_key]);
 		weather_weights = PackedFloat32Array(weights);
+	else:
+		weather_weights = PackedFloat32Array([1.0, 1.0, 1.0, 1.0]);
+		weathers = ["rainy", "sunny", "overcast", "average"]
 	if (cur_scenario.has("schedule")):
 		weather_schedule = cur_scenario["schedule"];
 		
