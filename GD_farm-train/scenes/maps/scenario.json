@@ -1,0 +1,22 @@
+{
+  "seed": 13,
+  "map": "river",
+  "scenarios": [
+	{
+	  "weather": {
+		"sunny": 0.1,
+		"rainy": 0.2,
+		"overcast": 0.1,
+		"average": 0.6
+	  },
+	  "schedule": {
+		"1": "sunny",
+		"5": "rainy"
+	  },
+	  "win": {
+		"plant": "Lilylurk",
+		"amount": 2
+	  }
+	}
+  ]
+}

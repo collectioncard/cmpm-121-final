@@ -1,6 +1,5 @@
-[gd_scene load_steps=10 format=4 uid="uid://d14wjww6re8oi"]
+[gd_scene load_steps=9 format=4 uid="uid://d14wjww6re8oi"]
 
-[ext_resource type="Script" path="res://scripts/Camera.cs" id="1_6nw0d"]
 [ext_resource type="PackedScene" uid="uid://cakaeaw1gr5mb" path="res://scenes/saveMenu.tscn" id="2_rbwh6"]
 [ext_resource type="Script" path="res://scripts/MouseInputManager.cs" id="3_fgekt"]
 [ext_resource type="Texture2D" uid="uid://bakp2lilgrggi" path="res://assets/itemFrame.png" id="3_fn6l6"]
@@ -83,7 +82,6 @@ drag_top_margin = 0.0
 drag_right_margin = 0.0
 drag_bottom_margin = 0.0
 editor_draw_limits = true
-script = ExtResource("1_6nw0d")
 
 [node name="TileGrid" type="TileMapLayer" parent="."]
 z_index = -1
