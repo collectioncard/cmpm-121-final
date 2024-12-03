@@ -48,7 +48,7 @@ unique_name_in_owner = true
 offset_left = 194.775
 offset_right = 296.775
 offset_bottom = 23.0
-text = "Current Tool:"
+text = "Current Tool"
 
 [node name="ToolTexture" type="Sprite2D" parent="UI/ToolLabel"]
 unique_name_in_owner = true
