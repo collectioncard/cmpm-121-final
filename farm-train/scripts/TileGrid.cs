@@ -263,15 +263,15 @@ public partial class TileGrid : TileMapLayer
         var tilePos = LocalToMap(pos);
         TileInfo curTile = GetPlantTile(tilePos.X, tilePos.Y);
 
-        var sunText = "Sun: " + CalcSun(curTile) + "%";
+        var sunText = CalcSun(curTile) + "%";
         var moisture = PlantDataManager.GetPropertyValueAtCoord(
             TileDataManager.Properties.MoistureLevel,
             tilePos
         );
-        var moistText = "Moisture: " + moisture + "%";
+        var moistText = moisture + "%";
 
         Label tileInfoLabel = GetParent().GetNode<Label>("UI/TileInfoBox/TileInfo");
-        tileInfoLabel.Text = "Tile Info:\n" + sunText + "\n" + moistText;
+        tileInfoLabel.Text = sunText + "\n" + moistText;
 
         // Move Panel Position
         // Commented out for now for testing
