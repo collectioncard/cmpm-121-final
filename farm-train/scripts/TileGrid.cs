@@ -258,6 +258,28 @@ public partial class TileGrid : TileMapLayer
         _bt = new BetterTerrain(this);
     }
 
+    public void MouseHoverOverInfo(Vector2 pos)
+    {
+        var tilePos = LocalToMap(pos);
+        TileInfo curTile = GetPlantTile(tilePos.X, tilePos.Y);
+
+        var sunText = CalcSun(curTile) + "%";
+        var moisture = PlantDataManager.GetPropertyValueAtCoord(
+            TileDataManager.Properties.MoistureLevel,
+            tilePos
+        );
+        var moistText = moisture + "%";
+
+        Label tileInfoLabel = GetParent().GetNode<Label>("UI/TileInfoBox/TileInfo");
+        tileInfoLabel.Text = sunText + "\n" + moistText;
+
+        // Move Panel Position
+        // Commented out for now for testing
+        // TODO: Have panel click to Tile Grid, Wait 3 Sec to Pop Up, Only show up on tiles cursor is visible
+        // Panel tileInfoBox = GetParent().GetNode<Panel>("UI/TileInfoBox");
+        // tileInfoBox.Position = pos + new Vector2(10, 10);
+    }
+
     public void TileClick(Vector2 pos, Tool tool)
     {
         var tilePos = LocalToMap(pos);
@@ -320,6 +342,12 @@ public partial class TileGrid : TileMapLayer
         {
             DayPassed();
             GetParent().GetNode<Label>("%DayLabel").Text = "Day: " + _day;
+        }
+
+        // Handle mouse motion for hover detection
+        if (@event is InputEventMouseMotion eventMouseMotion)
+        {
+            MouseHoverOverInfo(eventMouseMotion.Position);
         }
     }
 

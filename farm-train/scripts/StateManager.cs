@@ -67,6 +67,8 @@ public partial class StateManager : Node
         ResourceSaver.Save(_currentSave.Duplicate(), SavePath + SlotPath + slot + ".tres");
     }
 
+    public static void SaveFile(int fileNum) { }
+
     private static void LoadState(GameState loadState)
     {
         if (loadState == null)

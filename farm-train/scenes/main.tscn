@@ -1,16 +1,27 @@
-[gd_scene load_steps=9 format=4 uid="uid://d14wjww6re8oi"]
+[gd_scene load_steps=12 format=4 uid="uid://d14wjww6re8oi"]
 
+[ext_resource type="Script" path="res://scripts/Camera.cs" id="1_6nw0d"]
 [ext_resource type="PackedScene" uid="uid://cakaeaw1gr5mb" path="res://scenes/saveMenu.tscn" id="2_rbwh6"]
 [ext_resource type="Script" path="res://scripts/MouseInputManager.cs" id="3_fgekt"]
 [ext_resource type="Texture2D" uid="uid://bakp2lilgrggi" path="res://assets/itemFrame.png" id="3_fn6l6"]
-[ext_resource type="Texture2D" uid="uid://doo1lgf4mu48q" path="res://assets/tiles.png" id="3_lqs3n"]
 [ext_resource type="TileSet" uid="uid://c5fe35qjrbfls" path="res://scenes/tilesets/mainTileset.tres" id="6_qq7f8"]
 [ext_resource type="Script" path="res://scripts/Win.cs" id="7_kvvcq"]
 [ext_resource type="Script" path="res://scripts/TileGrid.cs" id="7_yrslm"]
 
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ckbse"]
+load_path = "res://.godot/imported/tiles.png-0d11a4bcdfb48056f67a66da241684a1.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bwnem"]
+atlas = SubResource("CompressedTexture2D_ckbse")
+region = Rect2(64, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u1vyj"]
+atlas = SubResource("CompressedTexture2D_ckbse")
+region = Rect2(80, 96, 16, 16)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_xlc1h"]
-atlas = ExtResource("3_lqs3n")
-region = Rect2(48, 96, 16, 16)
+atlas = SubResource("CompressedTexture2D_ckbse")
+region = Rect2(16, 96, 16, 16)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("3_fgekt")
@@ -50,6 +61,34 @@ position = Vector2(109, 14)
 position = Vector2(109, 14)
 texture = ExtResource("3_fn6l6")
 
+[node name="TileInfoBox" type="Panel" parent="UI"]
+offset_top = 53.0
+offset_right = 80.0
+offset_bottom = 103.0
+scale = Vector2(0.96, 1)
+
+[node name="TileInfo" type="Label" parent="UI/TileInfoBox"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 19.7917
+offset_top = -1.0
+offset_right = 151.792
+offset_bottom = 82.0
+text = "0%
+0%"
+
+[node name="SunTileData" type="Sprite2D" parent="UI/TileInfoBox"]
+z_index = 1
+position = Vector2(8.33333, 12)
+scale = Vector2(1.04167, 1)
+texture = SubResource("AtlasTexture_bwnem")
+
+[node name="MoistTileData" type="Sprite2D" parent="UI/TileInfoBox"]
+z_index = 1
+position = Vector2(8.33333, 38)
+scale = Vector2(1.04167, 1)
+texture = SubResource("AtlasTexture_u1vyj")
+
 [node name="Train" type="Sprite2D" parent="."]
 z_index = 1
 position = Vector2(8, 136)
@@ -67,6 +106,7 @@ drag_top_margin = 0.0
 drag_right_margin = 0.0
 drag_bottom_margin = 0.0
 editor_draw_limits = true
+script = ExtResource("1_6nw0d")
 
 [node name="TileGrid" type="TileMapLayer" parent="."]
 z_index = -1
