@@ -265,7 +265,7 @@ func tile_click(pos : Vector2, tool : Tool) -> void:
 func _input(event: InputEvent) -> void:
 	if (event.is_action_pressed("nextDay")):
 		day_passed();
-		get_parent().get_node("%DayLabel").text = "Day: " + str(cur_day);
+		get_parent().get_node("%DayLabel").text = str(cur_day);
 		
 func plant_seed(tile_pos : Vector2i, plant_idx : int):
 	if (BetterTerrain.get_cell(self, tile_pos) == 5 && get_plant_type(get_plant_tile(tile_pos.x, tile_pos.y)) == null && Global.Plants[plant_idx].planting_check(get_plant_tile(tile_pos.x, tile_pos.y).soil_type)):
@@ -285,7 +285,7 @@ func reload(new_state : PackedByteArray, day : int) -> void:
 		PlantDataManager.overwrite_tile_data(new_state);
 	cur_day = day;
 	pick_weather();
-	get_parent().get_node("%DayLabel").text = "Day: " + str(cur_day);
+	get_parent().get_node("%DayLabel").text = str(cur_day);
 
 	for i in (Global.TILE_MAP_SIZE.x * Global.TILE_MAP_SIZE.y):
 		#var curTile = PlantDataManager.get_tile_info_at_coord(Utils.vec_from_idx(i));
