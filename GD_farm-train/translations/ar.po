@@ -1,0 +1,43 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ar\n"
+
+msgid "Save"
+msgstr "حفظ"
+
+msgid "New Game"
+msgstr "لعبة جديدة"
+
+msgid "Load"
+msgstr "تحميل"
+
+msgid "Previous Auto Save"
+msgstr "الحفظ التلقائي السابق"
+
+msgid "Save Slot 1"
+msgstr "فتحة الحفظ 1"
+
+msgid "Save Slot 2"
+msgstr "فتحة الحفظ 2"
+
+msgid "rainy"
+msgstr "ممطر"
+
+msgid "sunny"
+msgstr "مشمس"
+
+msgid "overcast"
+msgstr "غائم"
+
+msgid "average"
+msgstr "متوسط"
+
+msgid "Day"
+msgstr "يوم"
+
+msgid "you win"
+msgstr "لقد فزت"
+
+msgid "Current Tool"
+msgstr "الأداة الحالية"

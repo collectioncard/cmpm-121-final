@@ -45,9 +45,9 @@ text = "Day: 0"
 
 [node name="ToolLabel" type="Label" parent="UI"]
 unique_name_in_owner = true
-offset_top = 21.0
-offset_right = 102.0
-offset_bottom = 44.0
+offset_left = 194.775
+offset_right = 296.775
+offset_bottom = 23.0
 text = "Current Tool:"
 
 [node name="ToolTexture" type="Sprite2D" parent="UI/ToolLabel"]
