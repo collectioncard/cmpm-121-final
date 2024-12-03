@@ -10,7 +10,7 @@ public partial class SaveMenu : CanvasLayer
     private Button saveButton;
     private Button loadButton;
 
-    private int saveCounter = 1;
+    private int saveCounter = 3;
 
     public override void _Ready()
     {
@@ -51,22 +51,6 @@ public partial class SaveMenu : CanvasLayer
         /*In order to keep the latest option at the top of the list, the list of
         options is saved, the optionButton is cleared, and the list is reentered
         with the latest option first*/
-
-        string[] allItems = new string[saveSelector.ItemCount + 1];
-
-        for (int i = 0; i < saveSelector.ItemCount; i++)
-        {
-            allItems[i + 1] = (saveSelector.GetItemText(i));
-        }
-
-        allItems[0] = $"Option {saveCounter}"; //Latest save
-        saveSelector.Clear();
-
-        foreach (string item in allItems)
-        {
-            saveSelector.AddItem(item);
-        }
-        saveCounter++;
     }
 
     private void OnLoadButtonPressed()

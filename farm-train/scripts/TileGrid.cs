@@ -248,7 +248,11 @@ public partial class TileGrid : TileMapLayer
         TileInfo curTile = GetPlantTile(tilePos.X, tilePos.Y);
 
         var sunText = "Sun: " + CalcSun(curTile) + "%";
-        var moistText = "Moisture: " + CalcMoisture(curTile) + "%";
+        var moisture = PlantDataManager.GetPropertyValueAtCoord(
+            TileDataManager.Properties.MoistureLevel,
+            tilePos
+        );
+        var moistText = "Moisture: " + moisture + "%";
 
         Label tileInfoLabel = GetParent().GetNode<Label>("UI/TileInfoBox/TileInfo");
         tileInfoLabel.Text = "Tile Info:\n" + sunText + "\n" + moistText;

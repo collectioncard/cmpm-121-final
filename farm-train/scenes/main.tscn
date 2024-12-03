@@ -58,6 +58,7 @@ offset_bottom = 133.0
 
 [node name="TileInfo" type="Label" parent="UI/TileInfoBox"]
 unique_name_in_owner = true
+layout_mode = 0
 offset_top = -1.0
 offset_right = 132.0
 offset_bottom = 82.0

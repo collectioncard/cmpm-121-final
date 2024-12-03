@@ -37,6 +37,8 @@ public partial class StateManager : Node
         ResourceSaver.Save(_save, SavePath);
     }
 
+    public static void SaveFile(int fileNum) { }
+
     private static void LoadState(GameState loadState)
     {
         if (loadState == null)
