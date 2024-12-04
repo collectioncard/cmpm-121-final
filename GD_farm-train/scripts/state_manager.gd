@@ -61,3 +61,12 @@ func load_from_file(slot : int) -> void:
 		temp_savefile = SaveFile.new();
 	current_save.OverwriteWith(temp_savefile);
 	load_state(temp_savefile.current_state());
+
+
+func _on_undo_button_down() -> void:
+	load_state(current_save.undo())
+	ResourceSaver.save(current_save, save_path + auto_save_path);
+
+func _on_redo_button_down() -> void:
+	load_state(current_save.redo())
+	ResourceSaver.save(current_save, save_path + auto_save_path);

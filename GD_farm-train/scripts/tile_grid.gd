@@ -306,5 +306,7 @@ func reload(new_state : PackedByteArray, day : int) -> void:
 		tile_sprites[Utils.index_from_vec(cur_tile.get_coordinates())].position = Vector2(cur_tile.coord_x * Global.TILE_WIDTH, cur_tile.coord_y * Global.TILE_HEIGHT) + Global.SPRITE_OFFSET;
 		
 		
-	
-	
+
+func _on_next_day_button_down() -> void:
+	day_passed();
+	get_parent().get_node("%DayLabel").text = "Day: " + str(cur_day);
