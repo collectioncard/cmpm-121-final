@@ -84,7 +84,7 @@ tile_map_data = PackedByteArray("AAD/////AAAEAAEAAFAAAP//AAABAAEAAAABAP//AAABAAE
 tile_set = ExtResource("6_qq7f8")
 script = ExtResource("7_4evb2")
 
-[node name="Button" type="Button" parent="."]
+[node name="NextTool" type="Button" parent="."]
 offset_left = 532.0
 offset_top = 265.0
 offset_right = 790.0
@@ -133,6 +133,7 @@ scale = Vector2(0.252, 0.252)
 icon = ExtResource("8_xg1y2")
 
 [connection signal="button_down" from="Button" to="." method="_on_button_button_down"]
+[connection signal="button_down" from="NextTool" to="." method="_on_button_button_down"]
 [connection signal="button_down" from="RightArrow" to="." method="_on_right_arrow_button_down"]
 [connection signal="button_down" from="LeftArrow" to="." method="_on_left_arrow_button_down"]
 [connection signal="button_down" from="UpArrow" to="." method="_on_up_arrow_button_down"]
