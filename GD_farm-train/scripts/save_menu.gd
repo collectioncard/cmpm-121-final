@@ -49,3 +49,12 @@ func _on_save_button_button_down() -> void:
 func _on_new_game_button_button_down() -> void:
 	print_debug("New game");
 	StateManager.new_game();
+
+
+func _on_save_menu_button_button_down() -> void:
+	if menu_popup.visible:
+		menu_popup.hide()
+	else:
+		menu_popup.show()
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		get_tree().paused = true
