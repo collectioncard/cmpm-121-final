@@ -128,3 +128,11 @@ func unlock(unlockee : int) -> void:
 		2:
 			Tools[4].disabled = false;
 		
+
+
+func _on_button_button_down() -> void:
+	print("Button Pressed");
+	cur_tool_idx = (cur_tool_idx + 1) % Tools.size();
+	while (Tools[cur_tool_idx].disabled):
+		cur_tool_idx = (cur_tool_idx + 1) % Tools.size(); # Replace with function body.
+	get_node("%ToolTexture").texture = Tools[cur_tool_idx].texture;
