@@ -160,7 +160,6 @@ scale = Vector2(0.24, 0.24)
 icon = ExtResource("12_qukod")
 
 [connection signal="button_down" from="NextDay" to="TileGrid" method="_on_next_day_button_down"]
-[connection signal="button_down" from="Button" to="." method="_on_button_button_down"]
 [connection signal="button_down" from="NextTool" to="." method="_on_button_button_down"]
 [connection signal="button_down" from="RightArrow" to="." method="_on_right_arrow_button_down"]
 [connection signal="button_down" from="LeftArrow" to="." method="_on_left_arrow_button_down"]
