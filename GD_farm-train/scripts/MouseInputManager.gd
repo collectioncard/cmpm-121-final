@@ -136,3 +136,22 @@ func _on_button_button_down() -> void:
 	while (Tools[cur_tool_idx].disabled):
 		cur_tool_idx = (cur_tool_idx + 1) % Tools.size(); # Replace with function body.
 	get_node("%ToolTexture").texture = Tools[cur_tool_idx].texture;
+#Connect mobile buttons for movement 
+func _on_down_arrow_button_down() -> void:
+	var new_pos = player.position + (Vector2.DOWN * Global.TILE_HEIGHT)
+	move_player(new_pos)
+
+
+func _on_up_arrow_button_down() -> void:
+	var new_pos = player.position + (Vector2.UP * Global.TILE_HEIGHT)
+	move_player(new_pos)
+
+
+func _on_left_arrow_button_down() -> void:
+	var new_pos = player.position + (Vector2.LEFT * Global.TILE_WIDTH)
+	move_player(new_pos)
+
+
+func _on_right_arrow_button_down() -> void:
+	var new_pos = player.position + (Vector2.RIGHT * Global.TILE_WIDTH)
+	move_player(new_pos)

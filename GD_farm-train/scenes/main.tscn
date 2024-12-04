@@ -8,6 +8,7 @@
 [ext_resource type="TileSet" uid="uid://c5fe35qjrbfls" path="res://scenes/tilesets/mainTileset.tres" id="6_qq7f8"]
 [ext_resource type="Script" path="res://scripts/tile_grid.gd" id="7_4evb2"]
 [ext_resource type="Texture2D" uid="uid://dfebpgismq5r2" path="res://assets/next_button.png" id="8_eo1my"]
+[ext_resource type="Texture2D" uid="uid://0a6n4ukdxlu6" path="res://assets/arrow_button.png" id="8_xg1y2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xlc1h"]
 atlas = ExtResource("3_lqs3n")
@@ -93,3 +94,46 @@ icon = ExtResource("8_eo1my")
 flat = true
 
 [connection signal="button_down" from="Button" to="." method="_on_button_button_down"]
+[node name="RightArrow" type="Button" parent="."]
+visible = false
+offset_left = 112.0
+offset_top = 238.0
+offset_right = 358.0
+offset_bottom = 484.0
+scale = Vector2(0.252, 0.252)
+icon = ExtResource("8_xg1y2")
+
+[node name="LeftArrow" type="Button" parent="."]
+visible = false
+offset_left = 67.0
+offset_top = 305.0
+offset_right = 332.0
+offset_bottom = 570.0
+rotation = 3.14159
+scale = Vector2(0.252, 0.252)
+icon = ExtResource("8_xg1y2")
+
+[node name="UpArrow" type="Button" parent="."]
+visible = false
+offset_left = 58.0
+offset_top = 247.0
+offset_right = 316.0
+offset_bottom = 505.0
+rotation = -1.5708
+scale = Vector2(0.252, 0.252)
+icon = ExtResource("8_xg1y2")
+
+[node name="DownArrow" type="Button" parent="."]
+visible = false
+offset_left = 122.0
+offset_top = 294.0
+offset_right = 380.0
+offset_bottom = 552.0
+rotation = 1.5708
+scale = Vector2(0.252, 0.252)
+icon = ExtResource("8_xg1y2")
+
+[connection signal="button_down" from="RightArrow" to="." method="_on_right_arrow_button_down"]
+[connection signal="button_down" from="LeftArrow" to="." method="_on_left_arrow_button_down"]
+[connection signal="button_down" from="UpArrow" to="." method="_on_up_arrow_button_down"]
+[connection signal="button_down" from="DownArrow" to="." method="_on_down_arrow_button_down"]
