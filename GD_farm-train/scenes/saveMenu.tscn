@@ -11,7 +11,6 @@ script = ExtResource("1_g80vy")
 auto_translate_mode = 1
 initial_position = 1
 size = Vector2i(328, 298)
-visible = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MenuPopup"]
 anchors_preset = 8
@@ -46,7 +45,11 @@ custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 text = "Load"
 
+[node name="LanguageSelector" type="OptionButton" parent="MenuPopup/VBoxContainer"]
+layout_mode = 2
+
 [node name="SaveMenuButton" type="Button" parent="."]
+layout_direction = 2
 offset_left = 563.0
 offset_top = -5.0
 offset_right = 635.0
@@ -56,5 +59,3 @@ icon = ExtResource("2_jjnkq")
 flat = true
 
 [connection signal="button_down" from="SaveMenuButton" to="." method="_on_save_menu_button_button_down"]
-[node name="LanguageSelector" type="OptionButton" parent="MenuPopup/VBoxContainer"]
-layout_mode = 2

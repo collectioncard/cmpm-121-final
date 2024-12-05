@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=4 uid="uid://d14wjww6re8oi"]
+[gd_scene load_steps=17 format=4 uid="uid://d14wjww6re8oi"]
 
 [ext_resource type="Script" path="res://scripts/MouseInputManager.gd" id="1_o4xd4"]
 [ext_resource type="PackedScene" uid="uid://cakaeaw1gr5mb" path="res://scenes/saveMenu.tscn" id="2_rbwh6"]
@@ -15,13 +15,13 @@
 [ext_resource type="Texture2D" uid="uid://c6ofnxs0k4v8j" path="res://assets/undo.png" id="12_n8i3m"]
 [ext_resource type="Script" path="res://scenes/undo.gd" id="13_vn3rg"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_xlc1h"]
-atlas = ExtResource("3_lqs3n")
-region = Rect2(48, 96, 16, 16)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_c1jen"]
 atlas = ExtResource("3_lqs3n")
 region = Rect2(64, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xlc1h"]
+atlas = ExtResource("3_lqs3n")
+region = Rect2(48, 96, 16, 16)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_o4xd4")
@@ -31,30 +31,110 @@ script = ExtResource("1_o4xd4")
 [node name="Win" type="Label" parent="."]
 visible = false
 top_level = true
-offset_left = 542.0
-offset_top = 3.0
-offset_right = 638.0
-offset_bottom = 26.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -48.0
+offset_top = 50.0
+offset_right = 48.0
+offset_bottom = 73.0
+grow_horizontal = 2
 text = "You are win!"
 script = ExtResource("2_tdk3b")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
-[node name="WeatherLabel" type="Label" parent="UI"]
-unique_name_in_owner = true
-offset_left = 4.0
-offset_top = 1.0
-offset_right = 45.0
-offset_bottom = 24.0
-text = "Clear
-"
+[node name="NextDay" type="Button" parent="UI"]
+layout_direction = 2
+offset_left = 584.0
+offset_top = 178.0
+offset_right = 608.0
+offset_bottom = 202.0
+scale = Vector2(1.92, 1.92)
+icon = SubResource("AtlasTexture_c1jen")
+
+[node name="NextTool" type="Button" parent="UI"]
+layout_direction = 2
+offset_left = 532.0
+offset_top = 265.0
+offset_right = 604.0
+offset_bottom = 337.0
+scale = Vector2(1.25, 1.25)
+icon = ExtResource("8_j0c1k")
+
+[node name="RightArrow" type="Button" parent="UI"]
+layout_direction = 2
+offset_left = 216.0
+offset_top = 288.0
+offset_right = 288.0
+offset_bottom = 360.0
+rotation = 1.5708
+icon = ExtResource("9_xdeww")
+
+[node name="LeftArrow" type="Button" parent="UI"]
+layout_direction = 2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = 180.0
+offset_right = -248.0
+offset_bottom = 252.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -1.5708
+size_flags_horizontal = 4
+size_flags_vertical = 4
+icon = ExtResource("9_xdeww")
+
+[node name="UpArrow" type="Button" parent="UI"]
+layout_direction = 2
+offset_left = 72.0
+offset_top = 216.0
+offset_right = 144.0
+offset_bottom = 288.0
+icon = ExtResource("9_xdeww")
+
+[node name="DownArrow" type="Button" parent="UI"]
+layout_direction = 2
+offset_left = 144.0
+offset_top = 360.0
+offset_right = 216.0
+offset_bottom = 432.0
+rotation = 3.14159
+icon = ExtResource("9_xdeww")
+
+[node name="Redo" type="Button" parent="UI"]
+offset_left = 496.0
+offset_right = 568.0
+offset_bottom = 72.0
+icon = ExtResource("10_7ahio")
+script = ExtResource("11_s64pa")
+
+[node name="Undo" type="Button" parent="UI"]
+offset_left = 424.0
+offset_right = 496.0
+offset_bottom = 72.0
+icon = ExtResource("12_n8i3m")
+script = ExtResource("13_vn3rg")
 
 [node name="DayLabel" type="Label" parent="UI"]
 unique_name_in_owner = true
-offset_left = 95.0
-offset_right = 105.0
+offset_left = 179.0
+offset_right = 189.0
 offset_bottom = 23.0
 text = "0"
+
+[node name="WeatherLabel" type="Label" parent="UI/DayLabel"]
+unique_name_in_owner = true
+offset_left = -24.0
+offset_top = 18.0
+offset_right = 17.0
+offset_bottom = 41.0
+text = "Clear
+"
 
 [node name="CalendarTexture" type="Sprite2D" parent="UI/DayLabel"]
 position = Vector2(-10, 12)
@@ -62,18 +142,18 @@ texture = ExtResource("4_uxhbd")
 
 [node name="ToolLabel" type="Label" parent="UI"]
 unique_name_in_owner = true
-offset_left = 194.775
-offset_right = 296.775
+offset_left = 238.0
+offset_right = 336.0
 offset_bottom = 23.0
 text = "Current Tool"
 
 [node name="ToolTexture" type="Sprite2D" parent="UI/ToolLabel"]
 unique_name_in_owner = true
-position = Vector2(120, 14)
+position = Vector2(53.225, 35)
 scale = Vector2(2, 2)
 
 [node name="ToolFrame" type="Sprite2D" parent="UI/ToolLabel"]
-position = Vector2(120, 14)
+position = Vector2(53.225, 35)
 scale = Vector2(2, 2)
 texture = ExtResource("3_fn6l6")
 
@@ -101,80 +181,11 @@ tile_map_data = PackedByteArray("AAD/////AAAEAAEAAFAAAP//AAABAAEAAAABAP//AAABAAE
 tile_set = ExtResource("6_qq7f8")
 script = ExtResource("7_4evb2")
 
-[node name="NextDay" type="Button" parent="."]
-offset_left = 584.0
-offset_top = 178.0
-offset_right = 608.0
-offset_bottom = 202.0
-scale = Vector2(1.92, 1.92)
-icon = SubResource("AtlasTexture_c1jen")
-
-[node name="NextTool" type="Button" parent="."]
-offset_left = 532.0
-offset_top = 265.0
-offset_right = 604.0
-offset_bottom = 337.0
-scale = Vector2(1.25, 1.25)
-icon = ExtResource("8_j0c1k")
-
-[node name="RightArrow" type="Button" parent="."]
-offset_left = 216.0
-offset_top = 288.0
-offset_right = 288.0
-offset_bottom = 360.0
-rotation = 1.5708
-icon = ExtResource("9_xdeww")
-
-[node name="LeftArrow" type="Button" parent="."]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_top = 360.0
-offset_right = 72.0
-offset_bottom = 432.0
-grow_horizontal = 2
-grow_vertical = 2
-rotation = -1.5708
-size_flags_horizontal = 4
-size_flags_vertical = 4
-icon = ExtResource("9_xdeww")
-
-[node name="UpArrow" type="Button" parent="."]
-offset_left = 72.0
-offset_top = 216.0
-offset_right = 144.0
-offset_bottom = 288.0
-icon = ExtResource("9_xdeww")
-
-[node name="DownArrow" type="Button" parent="."]
-offset_left = 144.0
-offset_top = 360.0
-offset_right = 216.0
-offset_bottom = 432.0
-rotation = 3.14159
-icon = ExtResource("9_xdeww")
-
-[node name="Redo" type="Button" parent="."]
-offset_left = 496.0
-offset_right = 568.0
-offset_bottom = 72.0
-icon = ExtResource("10_7ahio")
-script = ExtResource("11_s64pa")
-
-[node name="Undo" type="Button" parent="."]
-offset_left = 424.0
-offset_right = 496.0
-offset_bottom = 72.0
-icon = ExtResource("12_n8i3m")
-script = ExtResource("13_vn3rg")
-
-[connection signal="button_down" from="NextDay" to="TileGrid" method="_on_next_day_button_down"]
-[connection signal="button_down" from="NextTool" to="." method="_on_button_button_down"]
-[connection signal="button_down" from="RightArrow" to="." method="_on_right_arrow_button_down"]
-[connection signal="button_down" from="LeftArrow" to="." method="_on_left_arrow_button_down"]
-[connection signal="button_down" from="UpArrow" to="." method="_on_up_arrow_button_down"]
-[connection signal="button_down" from="DownArrow" to="." method="_on_down_arrow_button_down"]
-[connection signal="button_down" from="Redo" to="Redo" method="_on_button_down"]
-[connection signal="button_down" from="Undo" to="Undo" method="_on_button_down"]
+[connection signal="button_down" from="UI/NextDay" to="TileGrid" method="_on_next_day_button_down"]
+[connection signal="button_down" from="UI/NextTool" to="." method="_on_button_button_down"]
+[connection signal="button_down" from="UI/RightArrow" to="." method="_on_right_arrow_button_down"]
+[connection signal="button_down" from="UI/LeftArrow" to="." method="_on_left_arrow_button_down"]
+[connection signal="button_down" from="UI/UpArrow" to="." method="_on_up_arrow_button_down"]
+[connection signal="button_down" from="UI/DownArrow" to="." method="_on_down_arrow_button_down"]
+[connection signal="button_down" from="UI/Redo" to="UI/Redo" method="_on_button_down"]
+[connection signal="button_down" from="UI/Undo" to="UI/Undo" method="_on_button_down"]

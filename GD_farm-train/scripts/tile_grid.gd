@@ -309,4 +309,4 @@ func reload(new_state : PackedByteArray, day : int) -> void:
 
 func _on_next_day_button_down() -> void:
 	day_passed();
-	get_parent().get_node("%DayLabel").text = "Day: " + str(cur_day);
+	get_parent().get_node("%DayLabel").text = str(cur_day);
