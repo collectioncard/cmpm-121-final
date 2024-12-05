@@ -7,11 +7,11 @@
 [ext_resource type="Texture2D" uid="uid://doo1lgf4mu48q" path="res://assets/tiles.png" id="3_lqs3n"]
 [ext_resource type="TileSet" uid="uid://c5fe35qjrbfls" path="res://scenes/tilesets/mainTileset.tres" id="6_qq7f8"]
 [ext_resource type="Script" path="res://scripts/tile_grid.gd" id="7_4evb2"]
-[ext_resource type="Texture2D" uid="uid://dfebpgismq5r2" path="res://assets/next_button.png" id="8_eo1my"]
-[ext_resource type="Texture2D" uid="uid://0a6n4ukdxlu6" path="res://assets/arrow_button.png" id="8_xg1y2"]
-[ext_resource type="Texture2D" uid="uid://cv63ucllmd3ma" path="res://scripts/redo_button.png" id="10_mbse3"]
+[ext_resource type="Texture2D" uid="uid://bk2xnmwvprew0" path="res://assets/tool.png" id="8_j0c1k"]
+[ext_resource type="Texture2D" uid="uid://bvnkv1sfgwslh" path="res://assets/move.png" id="9_xdeww"]
+[ext_resource type="Texture2D" uid="uid://ce78evaaka74h" path="res://assets/redo.png" id="10_7ahio"]
 [ext_resource type="Script" path="res://scenes/redo.gd" id="11_s64pa"]
-[ext_resource type="Texture2D" uid="uid://1v4n06t5lcqy" path="res://scripts/undo_button.png" id="12_qukod"]
+[ext_resource type="Texture2D" uid="uid://c6ofnxs0k4v8j" path="res://assets/undo.png" id="12_n8i3m"]
 [ext_resource type="Script" path="res://scenes/undo.gd" id="13_vn3rg"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xlc1h"]
@@ -62,10 +62,12 @@ text = "Current Tool:"
 
 [node name="ToolTexture" type="Sprite2D" parent="UI/ToolLabel"]
 unique_name_in_owner = true
-position = Vector2(109, 14)
+position = Vector2(120, 14)
+scale = Vector2(2, 2)
 
 [node name="ToolFrame" type="Sprite2D" parent="UI/ToolLabel"]
-position = Vector2(109, 14)
+position = Vector2(120, 14)
+scale = Vector2(2, 2)
 texture = ExtResource("3_fn6l6")
 
 [node name="Train" type="Sprite2D" parent="."]
@@ -103,62 +105,62 @@ icon = SubResource("AtlasTexture_c1jen")
 [node name="NextTool" type="Button" parent="."]
 offset_left = 532.0
 offset_top = 265.0
-offset_right = 790.0
-offset_bottom = 523.0
-scale = Vector2(0.32, 0.32)
-icon = ExtResource("8_eo1my")
+offset_right = 604.0
+offset_bottom = 337.0
+scale = Vector2(1.25, 1.25)
+icon = ExtResource("8_j0c1k")
 
 [node name="RightArrow" type="Button" parent="."]
-offset_left = 112.0
-offset_top = 238.0
-offset_right = 358.0
-offset_bottom = 484.0
-scale = Vector2(0.252, 0.252)
-icon = ExtResource("8_xg1y2")
+offset_left = 216.0
+offset_top = 288.0
+offset_right = 288.0
+offset_bottom = 360.0
+rotation = 1.5708
+icon = ExtResource("9_xdeww")
 
 [node name="LeftArrow" type="Button" parent="."]
-offset_left = 67.0
-offset_top = 305.0
-offset_right = 332.0
-offset_bottom = 570.0
-rotation = 3.14159
-scale = Vector2(0.252, 0.252)
-icon = ExtResource("8_xg1y2")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_top = 360.0
+offset_right = 72.0
+offset_bottom = 432.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -1.5708
+size_flags_horizontal = 4
+size_flags_vertical = 4
+icon = ExtResource("9_xdeww")
 
 [node name="UpArrow" type="Button" parent="."]
-offset_left = 58.0
-offset_top = 247.0
-offset_right = 316.0
-offset_bottom = 505.0
-rotation = -1.5708
-scale = Vector2(0.252, 0.252)
-icon = ExtResource("8_xg1y2")
+offset_left = 72.0
+offset_top = 216.0
+offset_right = 144.0
+offset_bottom = 288.0
+icon = ExtResource("9_xdeww")
 
 [node name="DownArrow" type="Button" parent="."]
-offset_left = 122.0
-offset_top = 294.0
-offset_right = 380.0
-offset_bottom = 552.0
-rotation = 1.5708
-scale = Vector2(0.252, 0.252)
-icon = ExtResource("8_xg1y2")
+offset_left = 144.0
+offset_top = 360.0
+offset_right = 216.0
+offset_bottom = 432.0
+rotation = 3.14159
+icon = ExtResource("9_xdeww")
 
 [node name="Redo" type="Button" parent="."]
-offset_left = 569.0
-offset_top = 5.0
-offset_right = 827.0
-offset_bottom = 263.0
-scale = Vector2(0.24, 0.24)
-icon = ExtResource("10_mbse3")
+offset_left = 496.0
+offset_right = 568.0
+offset_bottom = 72.0
+icon = ExtResource("10_7ahio")
 script = ExtResource("11_s64pa")
 
 [node name="Undo" type="Button" parent="."]
-offset_left = 473.0
-offset_top = 6.0
-offset_right = 731.0
-offset_bottom = 264.0
-scale = Vector2(0.24, 0.24)
-icon = ExtResource("12_qukod")
+offset_left = 424.0
+offset_right = 496.0
+offset_bottom = 72.0
+icon = ExtResource("12_n8i3m")
 script = ExtResource("13_vn3rg")
 
 [connection signal="button_down" from="NextDay" to="TileGrid" method="_on_next_day_button_down"]
