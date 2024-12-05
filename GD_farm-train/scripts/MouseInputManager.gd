@@ -62,7 +62,7 @@ func _ready() -> void:
 	initialize_tools();
 	
 func _process(_delta: float) -> void:
-	if (Input.is_action_pressed("action1")):
+	if (Input.is_action_pressed("action2")):
 		if (!tile_cursor.visible):
 			return;
 		Tile_Click.emit(get_global_mouse_position(), Tools[cur_tool_idx]);
@@ -80,13 +80,11 @@ func move_player(new_pos : Vector2) -> void:
 	);
 	player.flip_h = get_global_mouse_position().x < player.position.x;
 	
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if (event is InputEventMouseMotion):
 		tile_cursor.position = Utils.tile_from_vec(event.position) + Global.SPRITE_OFFSET;
 		tile_cursor.visible = tile_cursor.position.distance_to(player.position) < Global.INTERACTION_RADIUS;
-	#move from mouse click
-	elif (event.is_action_pressed("action2")):
-		move_player(get_global_mouse_position());
+	
 	#move from wasd
 	elif (event.is_action_pressed("up")):
 		var new_pos : Vector2 = player.position + (Vector2.UP * Global.TILE_HEIGHT);

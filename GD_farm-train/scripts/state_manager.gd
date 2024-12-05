@@ -24,12 +24,17 @@ func _ready() -> void:
 	
 func _input(event: InputEvent) -> void:
 	if (event.is_action_pressed("undo")):
-		load_state(current_save.undo())
-		ResourceSaver.save(current_save, save_path + auto_save_path);
+		undo();
 	elif (event.is_action_pressed("redo")):
-		load_state(current_save.redo())
-		ResourceSaver.save(current_save, save_path + auto_save_path);
-		
+		redo();
+
+func undo() -> void:
+	load_state(current_save.undo())
+	ResourceSaver.save(current_save, save_path + auto_save_path);
+	
+func redo() -> void:
+	load_state(current_save.redo())
+	ResourceSaver.save(current_save, save_path + auto_save_path);
 		
 func new_game() -> void:
 	current_save = SaveFile.new();
@@ -61,12 +66,3 @@ func load_from_file(slot : int) -> void:
 		temp_savefile = SaveFile.new();
 	current_save.OverwriteWith(temp_savefile);
 	load_state(temp_savefile.current_state());
-
-
-func _on_undo_button_down() -> void:
-	load_state(current_save.undo())
-	ResourceSaver.save(current_save, save_path + auto_save_path);
-
-func _on_redo_button_down() -> void:
-	load_state(current_save.redo())
-	ResourceSaver.save(current_save, save_path + auto_save_path);

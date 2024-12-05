@@ -28,10 +28,11 @@ var plant_name_id_dict : Dictionary;
 ## Path to the current, necessary, plant dict.
 const plant_dict_path : String = "res://assets/plants/plant_dict.tres";
 
+
 func construct_plants() -> void:
-	assert(ResourceLoader.exists(plant_dict_path, "PlantDict"), "PlantDict not found!");
-		
-	var plant_dict : PlantDict = ResourceLoader.load(plant_dict_path);
+	assert(ResourceLoader.exists(plant_dict_path), "PlantDict not found!");
+	
+	var plant_dict : PlantDict = load(plant_dict_path);
 	#First pass - Construct dictionary
 	plant_name_id_dict.get_or_add(Plant.CROSSBREED.name, plant_ids);
 	plant_ids += 1;
