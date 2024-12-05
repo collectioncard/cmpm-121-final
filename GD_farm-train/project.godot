@@ -121,6 +121,10 @@ down={
 ]
 }
 
+[internationalization]
+
+locale/translations=PackedStringArray("res://translations/es.po", "res://translations/ja.po", "res://translations/en.po", "res://translations/ar.po")
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0

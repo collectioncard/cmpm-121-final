@@ -1,0 +1,43 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: en\n"
+
+msgid "Save"
+msgstr "Save"
+
+msgid "New Game"
+msgstr "New Game"
+
+msgid "Load"
+msgstr "Load"
+
+msgid "Previous Auto Save"
+msgstr "Previous Auto Save"
+
+msgid "Save Slot 1"
+msgstr "Save Slot 1"
+
+msgid "Save Slot 2"
+msgstr "Save Slot 2"
+
+msgid "rainy"
+msgstr "rainy"
+
+msgid "sunny"
+msgstr "sunny"
+
+msgid "overcast"
+msgstr "overcast"
+
+msgid "average"
+msgstr "average"
+
+msgid "Day"
+msgstr "Day"
+
+msgid "you win"
+msgstr "you win"
+
+msgid "Current Tool"
+msgstr "Current Tool"

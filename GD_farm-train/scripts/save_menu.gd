@@ -5,8 +5,10 @@ var save_selector: OptionButton
 var new_game_button: Button
 var save_button: Button
 var load_button: Button
+var language_selector: OptionButton
 
-var _save_slots = ["Prev Auto Save", "Save Slot 1", "Save Slot 2"]
+var _save_slots = ["Previous Auto Save", "Save Slot 1", "Save Slot 2"]
+var _language_slots = ["English", "Español", "日本語", "عربي"]
 
 func _ready() -> void:
 	menu_popup = $MenuPopup
@@ -14,10 +16,17 @@ func _ready() -> void:
 	new_game_button = $MenuPopup/VBoxContainer/NewGameButton
 	save_button = $MenuPopup/VBoxContainer/SaveButton
 	load_button = $MenuPopup/VBoxContainer/LoadButton
+	language_selector = $MenuPopup/VBoxContainer/LanguageSelector
 	
 	for slot in _save_slots:
 		save_selector.add_item(slot)
 	save_selector.select(0)
+	
+	for slot in _language_slots:
+		language_selector.add_item(slot);
+	
+	language_selector.item_selected.connect(_on_language_selected)
+		
 
 	menu_popup.hide()
 	
@@ -58,3 +67,14 @@ func _on_save_menu_button_button_down() -> void:
 		menu_popup.show()
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		get_tree().paused = true
+	
+func _on_language_selected(index) -> void:
+	match index:
+			0: 
+				TranslationServer.set_locale("en")
+			1:
+				TranslationServer.set_locale("es")
+			2:
+				TranslationServer.set_locale("ja")
+			3:
+				TranslationServer.set_locale("ar")
