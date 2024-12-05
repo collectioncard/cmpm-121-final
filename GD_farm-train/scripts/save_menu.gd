@@ -26,10 +26,9 @@ func _ready() -> void:
 		language_selector.add_item(slot);
 	
 	language_selector.item_selected.connect(_on_language_selected)
-		
 
 	menu_popup.hide()
-	
+
 	save_button.pressed.connect(_on_save_button_button_down);
 	load_button.pressed.connect(_on_load_button_button_down);
 	new_game_button.pressed.connect(_on_new_game_button_button_down);
@@ -41,10 +40,9 @@ func _process(_delta: float) -> void:
 			menu_popup.hide();
 		else:
 			menu_popup.show();
-			
+
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if menu_popup.visible else Input.MOUSE_MODE_CONFINED
 	get_tree().paused = menu_popup.visible
-			
 			
 
 func _on_load_button_button_down() -> void:

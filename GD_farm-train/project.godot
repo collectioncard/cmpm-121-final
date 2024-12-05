@@ -18,9 +18,9 @@ config/icon="res://assets/plants/plant1-0.png"
 [autoload]
 
 BetterTerrain="*res://addons/better-terrain/BetterTerrain.gd"
+StateManager="*res://scripts/state_manager.gd"
 Global="*res://scripts/global.gd"
 Utils="*res://scripts/utils.gd"
-StateManager="*res://scripts/state_manager.gd"
 
 [display]
 

@@ -1,7 +1,7 @@
 extends Node
 
 #TODO: Spread these vars to the classes that actually need them
-var Seed : int = 1;
+var Seed : int = 0;
 var rng : RandomNumberGenerator = RandomNumberGenerator.new();
 var Map_Type : String = "";
 @export var Scenarios : Array; #yummy array of dictionary dictionaries

@@ -35,7 +35,7 @@ func connect_to_grid() -> void:
 	Tile_Click.connect(StateManager.cur_tile_grid.tile_click);
 	StateManager.cur_tile_grid.Unlock.connect(unlock);
 	
-@export var win_plant_id : int = -1;
+@export var win_plant_id : int = -2;
 @export var win_amount : int = 0;
 var win_cur_count : int = 0;
 	
