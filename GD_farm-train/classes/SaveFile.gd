@@ -34,6 +34,5 @@ func redo() -> GameState:
 	return temp;
 	
 func OverwriteWith(writefrom : SaveFile) -> void:
-	#TODO: Double check if deep copy needs true
 	undo_stack = writefrom.undo_stack.duplicate();
 	redo_stack = writefrom.redo_stack.duplicate();

@@ -200,7 +200,7 @@ func initialize_map() -> void:
 
 #really ugly but it works!
 func generate_map() -> void:
-	var model = load("res://scenes/WFC/Output/world_map_model.tres");
+	var model = load("res://scenes/maps/world_map_model.tres");
 	var WFC = WFC_Solver.new();
 	WFC.pre_initialize(model, self);
 	WFC.populate_WFC(self);

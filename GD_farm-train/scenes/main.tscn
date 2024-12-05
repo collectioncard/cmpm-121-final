@@ -11,9 +11,9 @@
 [ext_resource type="Texture2D" uid="uid://bk2xnmwvprew0" path="res://assets/tool.png" id="8_j0c1k"]
 [ext_resource type="Texture2D" uid="uid://bvnkv1sfgwslh" path="res://assets/move.png" id="9_xdeww"]
 [ext_resource type="Texture2D" uid="uid://ce78evaaka74h" path="res://assets/redo.png" id="10_7ahio"]
-[ext_resource type="Script" path="res://scenes/redo.gd" id="11_s64pa"]
+[ext_resource type="Script" path="res://scripts/redo.gd" id="11_s64pa"]
 [ext_resource type="Texture2D" uid="uid://c6ofnxs0k4v8j" path="res://assets/undo.png" id="12_n8i3m"]
-[ext_resource type="Script" path="res://scenes/undo.gd" id="13_vn3rg"]
+[ext_resource type="Script" path="res://scripts/undo.gd" id="13_vn3rg"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_c1jen"]
 atlas = ExtResource("3_lqs3n")
@@ -129,6 +129,7 @@ text = "0"
 
 [node name="WeatherLabel" type="Label" parent="UI/DayLabel"]
 unique_name_in_owner = true
+layout_mode = 0
 offset_left = -24.0
 offset_top = 18.0
 offset_right = 17.0
