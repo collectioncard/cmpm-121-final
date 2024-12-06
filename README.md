@@ -160,3 +160,37 @@ The validate button validates a plant as having required fields and valid textur
 Our plan from the beginning was the if we were going to change languages we would change C# to GDScript. This is because we believe that C# is a harder language to use as so rather than having us change from an easier language to a harder language, we would change from a harder language to an easier one. This also meant we could frontload learning a language, instead of having to port the project while also learning a new, more complex, language. This also means we are using gdscript for our game for F3, which has true support for web and mobile builds.
 
 
+# Devlog Entry - [12/06/24]
+
+
+## How we satisfied the software requirements
+
+### F0 + F1 + F2 Requirements:
+ * **[F0.a]**: Movement is now controlled by either tapping buttons on the screen when on a mobile device or by using the w, a, s & d keys when a keyboard is available.
+ * **[F0.b]**: This System has not changed in the latest version of our game
+ * **[F0.c]**: This System has not changed in the latest version of our game
+ * **[F0.d]**: This System has not changed in the latest version of our game
+ * **[F0.e]**: This System has not changed in the latest version of our game
+ * **[F0.f]**: This System has not changed in the latest version of our game    
+ * **[F0.g]**: This System has not changed in the latest version of our game
+ * **[F1.a]**: This System has not changed in the latest version of our game
+ * **[F1.b]**: This System has not changed in the latest version of our game
+ * **[F1.c]**: This System has not changed in the latest version of our game
+ * **[F1.d]**: This System has not changed in the latest version of our game
+ * **[F2.a]**: This System has not changed in the latest version of our game
+ * **[F2.b]**: This System has not changed in the latest version of our game
+ * **[F2.c]**: This System has not changed in the latest version of our game
+
+    
+### F3 Requirements:
+ **[F3.a]**: One of the perks of using Godot and GDScript is that it comes with built in support for translation. In Godot, when attempting to translate all viewable text to a certain language there is a method called TranslationSever.set_locale(string). What this does is the it takes the string we give it (e.g “ja” for japanese) and searches through provided .po files for a matching file and translates viewable text to the language, so long as the text its attempting to translate is provided a translation in the given .po file. For example, if we know the game displays the word “save”, we must give each .po file a translation for “save” or else the word will be printed as shown in the code.
+
+ **[F3.b]**: For the localization of our game the languages we chose to support were English, Spanish (for a second non-logographic and non-right-to-left language), Japanese (for our logographic language), and Arabic (for our right-to-left language). For each of these languages we searched through our code for all instances that displayed text, then for each language we created its own .po file and gave it to Godot. When creating these .po files we referred to Brace for assistance in translation giving it a prompt of all of our words and how to acquire the needed translations. A user selects a language by going into the menu and selecting their language from a dropdown list. The games language will then change by using TranslationSever.set_locale(string) (“en” = english, “es” = spanish, “ja” = japanese, and “ar” = arabic). A note for the arabic setting is that the game will reflect the position of displayed text, so any HUD elements on the left of the screen will flip to the right side of the screen (as one would have in a right-to-left language).
+
+ **[F3.c]**: Thanks to the godot engine, exporting our project to a mobile platform only required adding touch controls to the screen. We decided to export our project to iOS because it was the most convenient platform for us. The resulting product was a native iOS build of the game that is not dependent on any external resources such as the internet. It is not published on the app store and instead must be sideloaded like any other ipa file.
+
+ **[F3.d]**: Because our mobile build of the game is native to iOS it acts like any other game that would be installed via the app store.
+
+## Reflection:
+One way these requirements changed how our games work unintentionally is the language settings. Before the changes, certain displayable text elements of our hud were variable like Day: 0, Day: 1, Day: 2, etc. One of the tricky parts about this is the need to give Godot all of the translations for each text. Because we cant provide a .po file with translations for Day: 0 all the way to Day:1000 (or beyond), we’ve had to changer he way certain hud elements display info. For these variable text displays we changed it to using a sprite such as a calendar to represent the day followed by a number. And because of the way Godot mirrors the position of text elements when using a right-to-left language, we’ve had to move certain hud elements to prevent them from being cut off of the screen.
+
