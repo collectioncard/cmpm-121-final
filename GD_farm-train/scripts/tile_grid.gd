@@ -259,6 +259,27 @@ func _input(event: InputEvent) -> void:
 	if (event.is_action_pressed("nextDay")):
 		day_passed();
 		get_parent().get_node("%DayLabel").text = str(cur_day);
+	
+	if event is InputEventMouseMotion:
+		mouse_hover_over_info(event.position);
+
+func mouse_hover_over_info(pos: Vector2) -> void:
+	var tile_pos = local_to_map(pos);
+	var cur_tile = get_plant_tile(tile_pos.x, tile_pos.y);
+	var sun_text = str(calc_sun(cur_tile)) + "%";
+	var moisture = PlantDataManager.get_property_value_at_coord(TileDataManager.properties.MOISTURE_LEVEL, tile_pos);
+	if (moisture >  100):
+		moisture = 100;
+	var moist_text = str(moisture) + "%";
+	var tile_info_label = get_parent().get_node("UI/TileInfoBox/TileInfo") as Label;
+	tile_info_label.text = sun_text + "\n" + moist_text;
+
+	#Move Panel Position
+	#Commented out for now for testing
+	#TODO: Have panel click to Tile Grid, Wait 3 Sec to Pop Up, Only show up on tiles cursor is visible
+	#Panel tileInfoBox = GetParent().GetNode<Panel>("UI/TileInfoBox");
+	#tileInfoBox.Position = pos + new Vector2(10, 10);
+
 
 func plant_seed(tile_pos : Vector2i, plant_idx : int):
 	if (BetterTerrain.get_cell(self, tile_pos) == 5 && get_plant_type(get_plant_tile(tile_pos.x, tile_pos.y)) == null && Global.Plants[plant_idx].planting_check(get_plant_tile(tile_pos.x, tile_pos.y).soil_type)):

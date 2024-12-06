@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=4 uid="uid://d14wjww6re8oi"]
+[gd_scene load_steps=20 format=4 uid="uid://d14wjww6re8oi"]
 
 [ext_resource type="Script" path="res://scripts/MouseInputManager.gd" id="1_o4xd4"]
 [ext_resource type="PackedScene" uid="uid://cakaeaw1gr5mb" path="res://scenes/saveMenu.tscn" id="2_rbwh6"]
@@ -18,6 +18,17 @@
 [sub_resource type="AtlasTexture" id="AtlasTexture_c1jen"]
 atlas = ExtResource("3_lqs3n")
 region = Rect2(64, 96, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_cxlpf"]
+load_path = "res://.godot/imported/tiles.png-0d11a4bcdfb48056f67a66da241684a1.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h8ur7"]
+atlas = SubResource("CompressedTexture2D_cxlpf")
+region = Rect2(64, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ae6ic"]
+atlas = SubResource("CompressedTexture2D_cxlpf")
+region = Rect2(80, 96, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xlc1h"]
 atlas = ExtResource("3_lqs3n")
@@ -160,6 +171,32 @@ scale = Vector2(2, 2)
 position = Vector2(53.225, 35)
 scale = Vector2(2, 2)
 texture = ExtResource("3_fn6l6")
+
+[node name="Label" type="Label" parent="UI"]
+offset_right = 66.0
+offset_bottom = 51.0
+
+[node name="TileInfoBox" type="Panel" parent="UI"]
+offset_left = 5.0
+offset_top = 3.0
+offset_right = 75.0
+offset_bottom = 53.0
+
+[node name="TileInfo" type="Label" parent="UI/TileInfoBox"]
+layout_mode = 0
+offset_left = 21.0
+offset_right = 61.0
+offset_bottom = 49.0
+text = "0 %
+0 %"
+
+[node name="SunIcon" type="Sprite2D" parent="UI/TileInfoBox"]
+position = Vector2(9, 11)
+texture = SubResource("AtlasTexture_h8ur7")
+
+[node name="MoistIcon" type="Sprite2D" parent="UI/TileInfoBox"]
+position = Vector2(9, 37)
+texture = SubResource("AtlasTexture_ae6ic")
 
 [node name="Train" type="Sprite2D" parent="."]
 z_index = 1
