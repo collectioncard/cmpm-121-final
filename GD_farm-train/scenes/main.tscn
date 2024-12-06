@@ -42,9 +42,10 @@ grow_horizontal = 2
 text = "You are win!"
 script = ExtResource("2_tdk3b")
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="Mobile" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
 
-[node name="NextDay" type="Button" parent="UI"]
+[node name="NextDay" type="Button" parent="Mobile"]
 layout_direction = 2
 offset_left = 584.0
 offset_top = 178.0
@@ -53,7 +54,7 @@ offset_bottom = 202.0
 scale = Vector2(1.92, 1.92)
 icon = SubResource("AtlasTexture_c1jen")
 
-[node name="NextTool" type="Button" parent="UI"]
+[node name="NextTool" type="Button" parent="Mobile"]
 layout_direction = 2
 offset_left = 532.0
 offset_top = 265.0
@@ -62,7 +63,7 @@ offset_bottom = 337.0
 scale = Vector2(1.25, 1.25)
 icon = ExtResource("8_j0c1k")
 
-[node name="RightArrow" type="Button" parent="UI"]
+[node name="RightArrow" type="Button" parent="Mobile"]
 layout_direction = 2
 offset_left = 216.0
 offset_top = 288.0
@@ -71,7 +72,7 @@ offset_bottom = 360.0
 rotation = 1.5708
 icon = ExtResource("9_xdeww")
 
-[node name="LeftArrow" type="Button" parent="UI"]
+[node name="LeftArrow" type="Button" parent="Mobile"]
 layout_direction = 2
 anchors_preset = 8
 anchor_left = 0.5
@@ -89,7 +90,7 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 icon = ExtResource("9_xdeww")
 
-[node name="UpArrow" type="Button" parent="UI"]
+[node name="UpArrow" type="Button" parent="Mobile"]
 layout_direction = 2
 offset_left = 72.0
 offset_top = 216.0
@@ -97,7 +98,7 @@ offset_right = 144.0
 offset_bottom = 288.0
 icon = ExtResource("9_xdeww")
 
-[node name="DownArrow" type="Button" parent="UI"]
+[node name="DownArrow" type="Button" parent="Mobile"]
 layout_direction = 2
 offset_left = 144.0
 offset_top = 360.0
@@ -106,19 +107,21 @@ offset_bottom = 432.0
 rotation = 3.14159
 icon = ExtResource("9_xdeww")
 
-[node name="Redo" type="Button" parent="UI"]
+[node name="Redo" type="Button" parent="Mobile"]
 offset_left = 496.0
 offset_right = 568.0
 offset_bottom = 72.0
 icon = ExtResource("10_7ahio")
 script = ExtResource("11_s64pa")
 
-[node name="Undo" type="Button" parent="UI"]
+[node name="Undo" type="Button" parent="Mobile"]
 offset_left = 424.0
 offset_right = 496.0
 offset_bottom = 72.0
 icon = ExtResource("12_n8i3m")
 script = ExtResource("13_vn3rg")
+
+[node name="UI" type="CanvasLayer" parent="."]
 
 [node name="DayLabel" type="Label" parent="UI"]
 unique_name_in_owner = true
@@ -182,11 +185,11 @@ tile_map_data = PackedByteArray("AAD/////AAAEAAEAAFAAAP//AAABAAEAAAABAP//AAABAAE
 tile_set = ExtResource("6_qq7f8")
 script = ExtResource("7_4evb2")
 
-[connection signal="button_down" from="UI/NextDay" to="TileGrid" method="_on_next_day_button_down"]
-[connection signal="button_down" from="UI/NextTool" to="." method="_on_button_button_down"]
-[connection signal="button_down" from="UI/RightArrow" to="." method="_on_right_arrow_button_down"]
-[connection signal="button_down" from="UI/LeftArrow" to="." method="_on_left_arrow_button_down"]
-[connection signal="button_down" from="UI/UpArrow" to="." method="_on_up_arrow_button_down"]
-[connection signal="button_down" from="UI/DownArrow" to="." method="_on_down_arrow_button_down"]
-[connection signal="button_down" from="UI/Redo" to="UI/Redo" method="_on_button_down"]
-[connection signal="button_down" from="UI/Undo" to="UI/Undo" method="_on_button_down"]
+[connection signal="button_down" from="Mobile/NextDay" to="TileGrid" method="_on_next_day_button_down"]
+[connection signal="button_down" from="Mobile/NextTool" to="." method="_on_button_button_down"]
+[connection signal="button_down" from="Mobile/RightArrow" to="." method="_on_right_arrow_button_down"]
+[connection signal="button_down" from="Mobile/LeftArrow" to="." method="_on_left_arrow_button_down"]
+[connection signal="button_down" from="Mobile/UpArrow" to="." method="_on_up_arrow_button_down"]
+[connection signal="button_down" from="Mobile/DownArrow" to="." method="_on_down_arrow_button_down"]
+[connection signal="button_down" from="Mobile/Redo" to="Mobile/Redo" method="_on_button_down"]
+[connection signal="button_down" from="Mobile/Undo" to="Mobile/Undo" method="_on_button_down"]

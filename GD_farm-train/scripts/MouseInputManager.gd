@@ -54,6 +54,7 @@ func get_win_con() -> void:
 		
 	
 func _ready() -> void:
+	get_node("%Mobile").visible = DisplayServer.is_touchscreen_available();
 	StateManager.cur_tile_grid = get_node("TileGrid");
 	get_win_con();
 	connect_to_grid();
