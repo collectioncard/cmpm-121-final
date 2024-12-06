@@ -216,6 +216,7 @@ func day_passed() -> void:
 		Unlock.emit(queue_unlock);
 	cur_day += 1;
 	pick_weather();
+	mouse_hover_over_info(get_global_mouse_position());
 	StateManager.save_auto(PlantDataManager.export_tile_data(), cur_day);
 
 func pick_weather() -> void:
@@ -263,19 +264,17 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		mouse_hover_over_info(event.position);
 
-func mouse_hover_over_info(pos: Vector2) -> void:
-	var tile_pos = local_to_map(pos);
-	var cur_tile = get_plant_tile(tile_pos.x, tile_pos.y);
-	var sun_text = str(calc_sun(cur_tile)) + "%";
-	var moisture = PlantDataManager.get_property_value_at_coord(TileDataManager.properties.MOISTURE_LEVEL, tile_pos);
-	if (moisture >  100):
-		moisture = 100;
-	var moist_text = str(moisture) + "%";
-	var tile_info_label = get_parent().get_node("UI/TileInfoBox/TileInfo") as Label;
-	tile_info_label.text = sun_text + "\n" + moist_text;
 
-	#Move Panel Position
-	#Commented out for now for testing
+func mouse_hover_over_info(pos: Vector2) -> void:
+	var tile_pos : Vector2i = local_to_map(pos);
+	var tile_info_label : Panel = get_parent().get_node("UI/TileInfoBox");
+	if (!has_tile(tile_pos.x, tile_pos.y)):
+		tile_info_label.visible = false;
+		return;
+	tile_info_label.visible = true;
+	var cur_tile : TileDataManager.TileInfo = get_plant_tile(tile_pos.x, tile_pos.y);
+	tile_info_label.get_node("Sun_Bar").value = calc_sun(cur_tile);
+	tile_info_label.get_node("Moist_Bar").value = cur_tile.moisture_level;
 	#TODO: Have panel click to Tile Grid, Wait 3 Sec to Pop Up, Only show up on tiles cursor is visible
 	#Panel tileInfoBox = GetParent().GetNode<Panel>("UI/TileInfoBox");
 	#tileInfoBox.Position = pos + new Vector2(10, 10);
