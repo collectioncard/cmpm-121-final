@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://cakaeaw1gr5mb"]
+[gd_scene load_steps=2 format=3 uid="uid://cakaeaw1gr5mb"]
 
 [ext_resource type="Script" path="res://scripts/save_menu.gd" id="1_g80vy"]
-[ext_resource type="Texture2D" uid="uid://d1f3ns74wqrih" path="res://assets/menu.png" id="2_jjnkq"]
 
 [node name="MenuCanvas" type="CanvasLayer"]
 process_mode = 3
@@ -10,7 +9,8 @@ script = ExtResource("1_g80vy")
 [node name="MenuPopup" type="Popup" parent="."]
 auto_translate_mode = 1
 initial_position = 1
-size = Vector2i(328, 298)
+size = Vector2i(328, 282)
+visible = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MenuPopup"]
 anchors_preset = 8
@@ -44,18 +44,3 @@ text = "Save"
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 text = "Load"
-
-[node name="LanguageSelector" type="OptionButton" parent="MenuPopup/VBoxContainer"]
-layout_mode = 2
-
-[node name="SaveMenuButton" type="Button" parent="."]
-layout_direction = 2
-offset_left = 563.0
-offset_top = -5.0
-offset_right = 635.0
-offset_bottom = 67.0
-scale = Vector2(1.125, 1.125)
-icon = ExtResource("2_jjnkq")
-flat = true
-
-[connection signal="button_down" from="SaveMenuButton" to="." method="_on_save_menu_button_button_down"]

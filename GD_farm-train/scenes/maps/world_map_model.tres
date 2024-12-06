@@ -1,11 +1,11 @@
 [gd_resource type="Resource" script_class="Special_Model" load_steps=3 format=3 uid="uid://dn7a86hitupcp"]
 
-[ext_resource type="Resource" uid="uid://bbyey4jb1mxdj" path="res://scenes/WFC/Output/world_map_defn.tres" id="1_jxvgm"]
-[ext_resource type="Script" path="res://scenes/WFC/WFC_Special_Model.gd" id="2_peg3f"]
+[ext_resource type="Resource" path="res://scenes/maps/world_map_defn.tres" id="1_bk0bh"]
+[ext_resource type="Script" path="res://scenes/WFC/WFC_Special_Model.gd" id="2_85cd4"]
 
 [resource]
-script = ExtResource("2_peg3f")
-rules_definition = ExtResource("1_jxvgm")
+script = ExtResource("2_85cd4")
+rules_definition = ExtResource("1_bk0bh")
 final_width = 40
 final_height = 23
 directions = 4

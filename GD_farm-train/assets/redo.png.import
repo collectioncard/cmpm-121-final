@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bbrweviftq2w7"
-path="res://.godot/imported/tileset_legacy.png-af9d9794696a31a091a57a0503131799.ctex"
+uid="uid://ce78evaaka74h"
+path="res://.godot/imported/redo.png-22e466e2eb52e1d07d8c1d67cf7894c0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tileset_legacy.png"
-dest_files=["res://.godot/imported/tileset_legacy.png-af9d9794696a31a091a57a0503131799.ctex"]
+source_file="res://assets/redo.png"
+dest_files=["res://.godot/imported/redo.png-22e466e2eb52e1d07d8c1d67cf7894c0.ctex"]
 
 [params]
 

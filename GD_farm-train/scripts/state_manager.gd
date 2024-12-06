@@ -24,12 +24,17 @@ func _ready() -> void:
 	
 func _input(event: InputEvent) -> void:
 	if (event.is_action_pressed("undo")):
-		load_state(current_save.undo())
-		ResourceSaver.save(current_save, save_path + auto_save_path);
+		undo();
 	elif (event.is_action_pressed("redo")):
-		load_state(current_save.redo())
-		ResourceSaver.save(current_save, save_path + auto_save_path);
-		
+		redo();
+
+func undo() -> void:
+	load_state(current_save.undo())
+	ResourceSaver.save(current_save, save_path + auto_save_path);
+	
+func redo() -> void:
+	load_state(current_save.redo())
+	ResourceSaver.save(current_save, save_path + auto_save_path);
 		
 func new_game() -> void:
 	current_save = SaveFile.new();
@@ -46,7 +51,7 @@ func save_to_file(slot : int) -> void:
 		return
 	ResourceSaver.save(current_save.duplicate(), save_path + slots_path + str(slot) + ".tres");
 	
-func load_state(loadstate : GameState) -> void:
+func load_state(loadstate : GameState = current_save.current_state()) -> void:
 	if (loadstate == null or cur_tile_grid == null):
 		return;
 	cur_tile_grid.reload(loadstate.tile_info, loadstate.day);

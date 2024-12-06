@@ -8,7 +8,7 @@ var growth_stages : int;
 var texture_paths : Array[String];
 
 var valid_soil_types : Array[int];
-var needed_neighbors : Array[int]; #"Bitmask"
+var needed_neighbors : Array[int];
 var sun_needed : Vector2i;
 var moisture_needed : int;
 
@@ -21,7 +21,8 @@ static var CROSSBREED = Plant.new(
 	[],
 	Vector2i(-1, -1),
 	-1
-						);
+);
+
 #Some godot stuff, added allowance for empty constructor out of safety, and occasional convenience.
 func _init(_id: int = -1, _name:String = "Error", _valid_soils : Array[int] = [], _texturePaths : Array[String] = ["res://assets/trowel.png"], _growthStages : int = 0, _neigbors : Array[int] = [], _sun : Vector2i = Vector2i.ZERO, _moist : int = 0):
 	id = _id;
@@ -53,7 +54,7 @@ func growth_check(sun : int, moisture: int, _neighbors : Array = []):
 	#If no checks above fail, check if for each neighbor in needed_neighbors, the actual neighbors have atleast that many neighbors.
 	return needed_neighbors.all(func(val):
 		return _neighbors.count(val) >= needed_neighbors.count(val);
-		);
+	);
 		
 	
 func add_offspring(newOffspringID : int) -> void:

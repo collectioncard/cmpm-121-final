@@ -1,0 +1,43 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ja\n"
+
+msgid "Save"
+msgstr "セーブ"
+
+msgid "New Game"
+msgstr "新しいゲーム"
+
+msgid "Load"
+msgstr "ロード"
+
+msgid "Previous Auto Save"
+msgstr "前回のオートセーブ"
+
+msgid "Save Slot 1"
+msgstr "セーブスロット 1"
+
+msgid "Save Slot 2"
+msgstr "セーブスロット 2"
+
+msgid "rainy"
+msgstr "雨"
+
+msgid "sunny"
+msgstr "晴れ"
+
+msgid "overcast"
+msgstr "曇り"
+
+msgid "average"
+msgstr "平均"
+
+msgid "Day"
+msgstr "日"
+
+msgid "you win"
+msgstr "あなたの勝ち"
+
+msgid "Current Tool"
+msgstr "現在のツール"

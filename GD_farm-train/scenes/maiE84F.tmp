@@ -1,27 +1,22 @@
-[gd_scene load_steps=17 format=4 uid="uid://d14wjww6re8oi"]
+[gd_scene load_steps=12 format=4 uid="uid://d14wjww6re8oi"]
 
 [ext_resource type="Script" path="res://scripts/MouseInputManager.gd" id="1_o4xd4"]
 [ext_resource type="PackedScene" uid="uid://cakaeaw1gr5mb" path="res://scenes/saveMenu.tscn" id="2_rbwh6"]
 [ext_resource type="Script" path="res://scripts/Win.gd" id="2_tdk3b"]
 [ext_resource type="Texture2D" uid="uid://bakp2lilgrggi" path="res://assets/itemFrame.png" id="3_fn6l6"]
 [ext_resource type="Texture2D" uid="uid://doo1lgf4mu48q" path="res://assets/tiles.png" id="3_lqs3n"]
-[ext_resource type="Texture2D" uid="uid://d0cutc8643nj6" path="res://assets/calendar.png" id="4_uxhbd"]
 [ext_resource type="TileSet" uid="uid://c5fe35qjrbfls" path="res://scenes/tilesets/mainTileset.tres" id="6_qq7f8"]
 [ext_resource type="Script" path="res://scripts/tile_grid.gd" id="7_4evb2"]
-[ext_resource type="Texture2D" uid="uid://bk2xnmwvprew0" path="res://assets/tool.png" id="8_j0c1k"]
-[ext_resource type="Texture2D" uid="uid://bvnkv1sfgwslh" path="res://assets/move.png" id="9_xdeww"]
-[ext_resource type="Texture2D" uid="uid://ce78evaaka74h" path="res://assets/redo.png" id="10_7ahio"]
-[ext_resource type="Script" path="res://scripts/redo.gd" id="11_s64pa"]
-[ext_resource type="Texture2D" uid="uid://c6ofnxs0k4v8j" path="res://assets/undo.png" id="12_n8i3m"]
-[ext_resource type="Script" path="res://scripts/undo.gd" id="13_vn3rg"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_c1jen"]
-atlas = ExtResource("3_lqs3n")
-region = Rect2(64, 96, 16, 16)
+[ext_resource type="Texture2D" uid="uid://dfebpgismq5r2" path="res://assets/next_button.png" id="8_eo1my"]
+[ext_resource type="Texture2D" uid="uid://0a6n4ukdxlu6" path="res://assets/arrow_button.png" id="8_xg1y2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xlc1h"]
 atlas = ExtResource("3_lqs3n")
 region = Rect2(48, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c1jen"]
+atlas = ExtResource("3_lqs3n")
+region = Rect2(64, 96, 16, 16)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_o4xd4")
@@ -31,134 +26,42 @@ script = ExtResource("1_o4xd4")
 [node name="Win" type="Label" parent="."]
 visible = false
 top_level = true
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -48.0
-offset_top = 50.0
-offset_right = 48.0
-offset_bottom = 73.0
-grow_horizontal = 2
+offset_left = 542.0
+offset_top = 3.0
+offset_right = 638.0
+offset_bottom = 26.0
 text = "You are win!"
 script = ExtResource("2_tdk3b")
 
-[node name="Mobile" type="CanvasLayer" parent="."]
-unique_name_in_owner = true
-
-[node name="NextDay" type="Button" parent="Mobile"]
-layout_direction = 2
-offset_left = 584.0
-offset_top = 178.0
-offset_right = 608.0
-offset_bottom = 202.0
-scale = Vector2(1.92, 1.92)
-icon = SubResource("AtlasTexture_c1jen")
-
-[node name="NextTool" type="Button" parent="Mobile"]
-layout_direction = 2
-offset_left = 532.0
-offset_top = 265.0
-offset_right = 604.0
-offset_bottom = 337.0
-scale = Vector2(1.25, 1.25)
-icon = ExtResource("8_j0c1k")
-
-[node name="RightArrow" type="Button" parent="Mobile"]
-layout_direction = 2
-offset_left = 216.0
-offset_top = 288.0
-offset_right = 288.0
-offset_bottom = 360.0
-rotation = 1.5708
-icon = ExtResource("9_xdeww")
-
-[node name="LeftArrow" type="Button" parent="Mobile"]
-layout_direction = 2
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -320.0
-offset_top = 180.0
-offset_right = -248.0
-offset_bottom = 252.0
-grow_horizontal = 2
-grow_vertical = 2
-rotation = -1.5708
-size_flags_horizontal = 4
-size_flags_vertical = 4
-icon = ExtResource("9_xdeww")
-
-[node name="UpArrow" type="Button" parent="Mobile"]
-layout_direction = 2
-offset_left = 72.0
-offset_top = 216.0
-offset_right = 144.0
-offset_bottom = 288.0
-icon = ExtResource("9_xdeww")
-
-[node name="DownArrow" type="Button" parent="Mobile"]
-layout_direction = 2
-offset_left = 144.0
-offset_top = 360.0
-offset_right = 216.0
-offset_bottom = 432.0
-rotation = 3.14159
-icon = ExtResource("9_xdeww")
-
-[node name="Redo" type="Button" parent="Mobile"]
-offset_left = 496.0
-offset_right = 568.0
-offset_bottom = 72.0
-icon = ExtResource("10_7ahio")
-script = ExtResource("11_s64pa")
-
-[node name="Undo" type="Button" parent="Mobile"]
-offset_left = 424.0
-offset_right = 496.0
-offset_bottom = 72.0
-icon = ExtResource("12_n8i3m")
-script = ExtResource("13_vn3rg")
-
 [node name="UI" type="CanvasLayer" parent="."]
 
-[node name="DayLabel" type="Label" parent="UI"]
+[node name="WeatherLabel" type="Label" parent="UI"]
 unique_name_in_owner = true
-offset_left = 179.0
-offset_right = 189.0
+offset_left = 61.0
+offset_right = 102.0
 offset_bottom = 23.0
-text = "0"
-
-[node name="WeatherLabel" type="Label" parent="UI/DayLabel"]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = -24.0
-offset_top = 18.0
-offset_right = 17.0
-offset_bottom = 41.0
 text = "Clear
 "
 
-[node name="CalendarTexture" type="Sprite2D" parent="UI/DayLabel"]
-position = Vector2(-10, 12)
-texture = ExtResource("4_uxhbd")
+[node name="DayLabel" type="Label" parent="UI"]
+unique_name_in_owner = true
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Day: 0"
 
 [node name="ToolLabel" type="Label" parent="UI"]
 unique_name_in_owner = true
-offset_left = 238.0
-offset_right = 336.0
-offset_bottom = 23.0
-text = "Current Tool"
+offset_top = 21.0
+offset_right = 102.0
+offset_bottom = 44.0
+text = "Current Tool:"
 
 [node name="ToolTexture" type="Sprite2D" parent="UI/ToolLabel"]
 unique_name_in_owner = true
-position = Vector2(53.225, 35)
-scale = Vector2(2, 2)
+position = Vector2(109, 14)
 
 [node name="ToolFrame" type="Sprite2D" parent="UI/ToolLabel"]
-position = Vector2(53.225, 35)
-scale = Vector2(2, 2)
+position = Vector2(109, 14)
 texture = ExtResource("3_fn6l6")
 
 [node name="Train" type="Sprite2D" parent="."]
@@ -185,11 +88,60 @@ tile_map_data = PackedByteArray("AAD/////AAAEAAEAAFAAAP//AAABAAEAAAABAP//AAABAAE
 tile_set = ExtResource("6_qq7f8")
 script = ExtResource("7_4evb2")
 
-[connection signal="button_down" from="Mobile/NextDay" to="TileGrid" method="_on_next_day_button_down"]
-[connection signal="button_down" from="Mobile/NextTool" to="." method="_on_button_button_down"]
-[connection signal="button_down" from="Mobile/RightArrow" to="." method="_on_right_arrow_button_down"]
-[connection signal="button_down" from="Mobile/LeftArrow" to="." method="_on_left_arrow_button_down"]
-[connection signal="button_down" from="Mobile/UpArrow" to="." method="_on_up_arrow_button_down"]
-[connection signal="button_down" from="Mobile/DownArrow" to="." method="_on_down_arrow_button_down"]
-[connection signal="button_down" from="Mobile/Redo" to="Mobile/Redo" method="_on_button_down"]
-[connection signal="button_down" from="Mobile/Undo" to="Mobile/Undo" method="_on_button_down"]
+[node name="NextDay" type="Button" parent="."]
+offset_left = 584.0
+offset_top = 178.0
+offset_right = 608.0
+offset_bottom = 202.0
+scale = Vector2(1.92, 1.92)
+icon = SubResource("AtlasTexture_c1jen")
+
+[node name="NextTool" type="Button" parent="."]
+offset_left = 532.0
+offset_top = 265.0
+offset_right = 790.0
+offset_bottom = 523.0
+scale = Vector2(0.32, 0.32)
+icon = ExtResource("8_eo1my")
+
+[node name="RightArrow" type="Button" parent="."]
+offset_left = 112.0
+offset_top = 238.0
+offset_right = 358.0
+offset_bottom = 484.0
+scale = Vector2(0.252, 0.252)
+icon = ExtResource("8_xg1y2")
+
+[node name="LeftArrow" type="Button" parent="."]
+offset_left = 67.0
+offset_top = 305.0
+offset_right = 332.0
+offset_bottom = 570.0
+rotation = 3.14159
+scale = Vector2(0.252, 0.252)
+icon = ExtResource("8_xg1y2")
+
+[node name="UpArrow" type="Button" parent="."]
+offset_left = 58.0
+offset_top = 247.0
+offset_right = 316.0
+offset_bottom = 505.0
+rotation = -1.5708
+scale = Vector2(0.252, 0.252)
+icon = ExtResource("8_xg1y2")
+
+[node name="DownArrow" type="Button" parent="."]
+offset_left = 122.0
+offset_top = 294.0
+offset_right = 380.0
+offset_bottom = 552.0
+rotation = 1.5708
+scale = Vector2(0.252, 0.252)
+icon = ExtResource("8_xg1y2")
+
+[connection signal="button_down" from="NextDay" to="." method="_on_next_day_button_down"]
+[connection signal="button_down" from="NextTool" to="." method="_on_button_button_down"]
+[connection signal="button_down" from="RightArrow" to="." method="_on_right_arrow_button_down"]
+[connection signal="button_down" from="LeftArrow" to="." method="_on_left_arrow_button_down"]
+[connection signal="button_down" from="UpArrow" to="." method="_on_up_arrow_button_down"]
+[connection signal="button_down" from="DownArrow" to="." method="_on_down_arrow_button_down"]

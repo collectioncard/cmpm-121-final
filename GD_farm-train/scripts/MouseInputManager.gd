@@ -35,7 +35,7 @@ func connect_to_grid() -> void:
 	Tile_Click.connect(StateManager.cur_tile_grid.tile_click);
 	StateManager.cur_tile_grid.Unlock.connect(unlock);
 	
-@export var win_plant_id : int = -1;
+@export var win_plant_id : int = -2;
 @export var win_amount : int = 0;
 var win_cur_count : int = 0;
 	
@@ -54,6 +54,7 @@ func get_win_con() -> void:
 		
 	
 func _ready() -> void:
+	get_node("%Mobile").visible = DisplayServer.is_touchscreen_available();
 	StateManager.cur_tile_grid = get_node("TileGrid");
 	get_win_con();
 	connect_to_grid();
@@ -62,7 +63,7 @@ func _ready() -> void:
 	initialize_tools();
 	
 func _process(_delta: float) -> void:
-	if (Input.is_action_pressed("action1")):
+	if (Input.is_action_pressed("action2")):
 		if (!tile_cursor.visible):
 			return;
 		Tile_Click.emit(get_global_mouse_position(), Tools[cur_tool_idx]);
@@ -80,13 +81,11 @@ func move_player(new_pos : Vector2) -> void:
 	);
 	player.flip_h = get_global_mouse_position().x < player.position.x;
 	
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if (event is InputEventMouseMotion):
 		tile_cursor.position = Utils.tile_from_vec(event.position) + Global.SPRITE_OFFSET;
 		tile_cursor.visible = tile_cursor.position.distance_to(player.position) < Global.INTERACTION_RADIUS;
-	#move from mouse click
-	elif (event.is_action_pressed("action2")):
-		move_player(get_global_mouse_position());
+	
 	#move from wasd
 	elif (event.is_action_pressed("up")):
 		var new_pos : Vector2 = player.position + (Vector2.UP * Global.TILE_HEIGHT);
@@ -128,3 +127,29 @@ func unlock(unlockee : int) -> void:
 		2:
 			Tools[4].disabled = false;
 		
+
+
+func _on_button_button_down() -> void:
+	cur_tool_idx = (cur_tool_idx + 1) % Tools.size();
+	while (Tools[cur_tool_idx].disabled):
+		cur_tool_idx = (cur_tool_idx + 1) % Tools.size(); # Replace with function body.
+	get_node("%ToolTexture").texture = Tools[cur_tool_idx].texture;
+#Connect mobile buttons for movement 
+func _on_down_arrow_button_down() -> void:
+	var new_pos = player.position + (Vector2.DOWN * Global.TILE_HEIGHT)
+	move_player(new_pos)
+
+
+func _on_up_arrow_button_down() -> void:
+	var new_pos = player.position + (Vector2.UP * Global.TILE_HEIGHT)
+	move_player(new_pos)
+
+
+func _on_left_arrow_button_down() -> void:
+	var new_pos = player.position + (Vector2.LEFT * Global.TILE_WIDTH)
+	move_player(new_pos)
+
+
+func _on_right_arrow_button_down() -> void:
+	var new_pos = player.position + (Vector2.RIGHT * Global.TILE_WIDTH)
+	move_player(new_pos)
